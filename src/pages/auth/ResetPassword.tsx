@@ -117,7 +117,7 @@ export function ResetPassword() {
 
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
           {error && (
-            <div className="mb-4 p-3 bg-danger-50 text-danger-600 text-sm rounded-lg">
+            <div className="mb-4 p-3 bg-danger-50 text-danger-600 text-sm rounded-lg" role="alert">
               {error}
             </div>
           )}

@@ -4,6 +4,7 @@ import { MapPin, BedDouble, Bath, Maximize, Building, Calendar, Eye, Heart, Shar
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { Head } from '@/components/seo/Head';
 import { useProperty } from '@/hooks/useProperty';
 import { formatPrice, formatDate, getListingTypeLabel, getPropertyTypeLabel } from '@/lib/utils';
 
@@ -45,7 +46,13 @@ export function PropertyDetail() {
   const otherImages = property.images?.filter((img) => img !== primaryImage) || [];
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <>
+      <Head
+        title={property.title}
+        description={`${property.title} — ${getPropertyTypeLabel(property.property_type)} à ${property.city?.name || 'Gonaïves'}. ${property.bedrooms} chambres, ${property.bathrooms} salles de bain. ${formatPrice(property.price, property.price_currency)}.`}
+        image={primaryImage?.url}
+      />
+      <div className="bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm text-gray-500 mb-6">
@@ -67,6 +74,8 @@ export function PropertyDetail() {
                     src={primaryImage.url}
                     alt={primaryImage.alt_text || property.title}
                     className="w-full h-full object-cover"
+                    loading="eager"
+                    decoding="async"
                   />
                   <div className="absolute top-4 left-4 flex gap-2">
                     <Badge variant={property.listing_type === 'rent' ? 'secondary' : 'primary'}>
@@ -87,7 +96,7 @@ export function PropertyDetail() {
                 <div className="grid grid-cols-4 gap-2 p-2">
                   {otherImages.slice(0, 4).map((img) => (
                     <div key={img.id} className="aspect-square rounded-lg overflow-hidden bg-gray-100">
-                      <img src={img.url} alt={img.alt_text || ''} className="w-full h-full object-cover" />
+                      <img src={img.url} alt={img.alt_text || ''} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                     </div>
                   ))}
                 </div>
@@ -248,5 +257,6 @@ export function PropertyDetail() {
         </div>
       </div>
     </div>
+    </>
   );
 }

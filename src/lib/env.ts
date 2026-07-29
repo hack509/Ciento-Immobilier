@@ -6,45 +6,36 @@ interface EnvConfig {
   geminiProxyUrl: string;
 }
 
-function requireEnv(name: string): string {
-  const value = import.meta.env[name] as string | undefined;
-  if (!value) {
-    throw new Error(
-      `Missing required environment variable: ${name}\n` +
-      `  Please set ${name} in your .env file.\n` +
-      `  See .env.example for reference.`
-    );
-  }
-  return value;
+function getEnvVar(name: string, fallback = ''): string {
+  return (import.meta.env[name] as string | undefined) || fallback;
 }
 
 let cached: EnvConfig | null = null;
-let validationError: Error | null = null;
 
 export function getEnv(): EnvConfig {
   if (cached) return cached;
-  if (validationError) throw validationError;
 
-  try {
-    cached = {
-      supabaseUrl: requireEnv('VITE_SUPABASE_URL'),
-      supabaseAnonKey: requireEnv('VITE_SUPABASE_ANON_KEY'),
-      appUrl: import.meta.env.VITE_APP_URL as string || 'http://localhost:5173',
-      appName: (import.meta.env.VITE_APP_NAME as string) || 'Ciento-Immobilier',
-      geminiProxyUrl: (import.meta.env.VITE_GEMINI_PROXY_URL as string) || '/api/gemini-proxy',
-    };
-    return cached;
-  } catch (e) {
-    validationError = e instanceof Error ? e : new Error('Environment validation failed');
-    throw validationError;
+  const supabaseUrl = getEnvVar('VITE_SUPABASE_URL');
+  const supabaseAnonKey = getEnvVar('VITE_SUPABASE_ANON_KEY');
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.warn(
+      '[env] Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY. ' +
+      'Copy .env.example to .env and fill in your Supabase credentials.'
+    );
   }
+
+  cached = {
+    supabaseUrl,
+    supabaseAnonKey,
+    appUrl: getEnvVar('VITE_APP_URL', 'http://localhost:5173'),
+    appName: getEnvVar('VITE_APP_NAME', 'Ciento-Immobilier'),
+    geminiProxyUrl: getEnvVar('VITE_GEMINI_PROXY_URL', '/api/gemini-proxy'),
+  };
+  return cached;
 }
 
 export function isEnvConfigured(): boolean {
-  try {
-    getEnv();
-    return true;
-  } catch {
-    return false;
-  }
+  const env = getEnv();
+  return Boolean(env.supabaseUrl && env.supabaseAnonKey);
 }

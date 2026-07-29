@@ -30,3 +30,9 @@ npm-debug.log*
 # Misc
 coverage/
 .cache/
+
+# Supabase
+supabase/.temp/
+
+# Vercel
+.vercel/

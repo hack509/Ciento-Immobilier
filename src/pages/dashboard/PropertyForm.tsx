@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save, Send, Trash2 } from 'lucide-react';
-import { useForm } from 'react-hook-form';
+import { ArrowLeft, Save, Trash2 } from 'lucide-react';
+import { useForm, type Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/Button';
@@ -89,7 +89,10 @@ export function PropertyForm() {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<PropertyFormData>({
-    resolver: zodResolver(propertySchema),
+    // NOTE: zodResolver type inference has a known compatibility issue with Zod v4's z.coerce.number()
+    // The inferred type shows price:unknown instead of price:number
+    resolver: zodResolver(propertySchema) as unknown as Resolver<PropertyFormData>,
+
     defaultValues: {
       price_currency: 'HTG',
       price_negotiable: false,
@@ -151,7 +154,7 @@ export function PropertyForm() {
         land_area: data.land_area || null,
         building_area: data.building_area || null,
         year_built: data.year_built || null,
-      };
+      } as unknown as Partial<Property>;
 
       let propertyId: string;
 

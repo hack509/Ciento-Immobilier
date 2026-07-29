@@ -79,3 +79,8 @@ npx supabase db push
 Or: If the project doesn't exist yet on Supabase
 You need to create it first at supabase.com/dashboard (https://supabase.com/dashboard), then the CLI can link to it.
 Once linked, npx supabase db push will push all 7 of your migration files (001 through 007) to the remote database in order. After that, any time you create a new migration with npx supabase migration new <name>, just run npx supabase db push to deploy it.
+
+
+supabase login
+supabase init
+supabase link --project-ref mbmjbkrnsxtdnatsulur

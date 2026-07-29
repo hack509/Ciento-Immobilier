@@ -65,7 +65,7 @@ export function MyProperties() {
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
                           {property.images?.[0] ? (
-                            <img src={property.images[0].url} alt="" className="w-12 h-12 rounded-lg object-cover" />
+                            <img src={property.images[0].url} alt="" className="w-12 h-12 rounded-lg object-cover" loading="lazy" />
                           ) : (
                             <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">
                               <Building2 className="w-5 h-5" />

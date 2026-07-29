@@ -62,17 +62,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     initAuth();
 
-    const { data: { subscription } } = authService.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session) {
-        const s = session as { user: User };
-        setState((prev) => ({ ...prev, user: s.user }));
-        await loadProfile(s.user.id);
-      } else if (event === 'SIGNED_OUT') {
-        setState({ user: null, profile: null, isLoading: false, isAuthenticated: false });
-      }
-    });
+    let cleanup: (() => void) | null = null;
+    try {
+      const { data: { subscription } } = authService.onAuthStateChange(async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          const s = session as { user: User };
+          setState((prev) => ({ ...prev, user: s.user }));
+          await loadProfile(s.user.id);
+        } else if (event === 'SIGNED_OUT') {
+          setState({ user: null, profile: null, isLoading: false, isAuthenticated: false });
+        }
+      });
+      cleanup = () => subscription.unsubscribe();
+    } catch {
+      cleanup = null;
+    }
 
-    return () => subscription.unsubscribe();
+    return () => { cleanup?.(); };
   }, [loadProfile]);
 
   const signIn = useCallback(async (params: SignInParams) => {

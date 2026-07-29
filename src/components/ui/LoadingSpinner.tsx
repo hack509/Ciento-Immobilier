@@ -14,7 +14,7 @@ const sizes = {
 
 export function LoadingSpinner({ size = 'md', className, text }: LoadingSpinnerProps) {
   return (
-    <div className={cn('flex flex-col items-center justify-center gap-3', className)}>
+    <div className={cn('flex flex-col items-center justify-center gap-3', className)} role="status" aria-label={text || 'Chargement'}>
       <div
         className={cn(
           'border-4 border-secondary-200 border-t-secondary-500 rounded-full animate-spin',

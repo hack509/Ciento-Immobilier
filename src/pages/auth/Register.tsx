@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, Phone, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { Head } from '@/components/seo/Head';
 import { useAuth } from '@/contexts/AuthContext';
 
 export function Register() {
@@ -50,7 +51,9 @@ export function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
+    <>
+      <Head title="Créer un compte" description="Rejoignez la communauté Ciento-Immobilier et publiez vos annonces." />
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 mb-6">
@@ -62,7 +65,7 @@ export function Register() {
 
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
           {error && (
-            <div className="mb-4 p-3 bg-danger-50 text-danger-600 text-sm rounded-lg">
+            <div className="mb-4 p-3 bg-danger-50 text-danger-600 text-sm rounded-lg" role="alert">
               {error}
             </div>
           )}
@@ -145,5 +148,6 @@ export function Register() {
         </p>
       </div>
     </div>
+    </>
   );
 }

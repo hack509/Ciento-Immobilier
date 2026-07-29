@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { Head } from '@/components/seo/Head';
 
 export function Contact() {
   const [formData, setFormData] = useState({
@@ -57,7 +58,9 @@ export function Contact() {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <>
+      <Head title="Contact" description="Contactez l'équipe Ciento-Immobilier. Nous sommes là pour vous aider avec vos projets immobiliers." />
+      <div className="bg-gray-50 min-h-screen">
       <div className="bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Contactez-nous</h1>
@@ -69,7 +72,7 @@ export function Contact() {
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-6">Envoyez-nous un message</h2>
             {error && (
-              <div className="mb-4 p-3 bg-danger-50 text-danger-600 text-sm rounded-lg">{error}</div>
+              <div className="mb-4 p-3 bg-danger-50 text-danger-600 text-sm rounded-lg" role="alert">{error}</div>
             )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -122,5 +125,6 @@ export function Contact() {
         </div>
       </div>
     </div>
+    </>
   );
 }

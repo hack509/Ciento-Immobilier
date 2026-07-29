@@ -68,17 +68,17 @@ export function generatePropertyUrl(property: { slug: string; city?: { slug: str
   return `/annonces/${citySlug}/${property.slug}`;
 }
 
-export function getStatusColor(status: string): string {
-  const colors: Record<string, string> = {
-    active: 'bg-success-50 text-success-600',
-    pending: 'bg-warning-50 text-warning-500',
-    sold: 'bg-primary-100 text-primary-700',
-    rented: 'bg-primary-100 text-primary-700',
-    draft: 'bg-gray-100 text-gray-600',
-    expired: 'bg-danger-50 text-danger-500',
-    suspended: 'bg-danger-50 text-danger-500',
+export function getStatusColor(status: string): 'success' | 'warning' | 'primary' | 'default' | 'danger' {
+  const colors: Record<string, 'success' | 'warning' | 'primary' | 'default' | 'danger'> = {
+    active: 'success',
+    pending: 'warning',
+    sold: 'primary',
+    rented: 'primary',
+    draft: 'default',
+    expired: 'danger',
+    suspended: 'danger',
   };
-  return colors[status] || 'bg-gray-100 text-gray-600';
+  return colors[status] || 'default';
 }
 
 export function getListingTypeLabel(type: string): string {

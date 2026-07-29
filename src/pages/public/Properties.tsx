@@ -4,6 +4,7 @@ import { PropertyCardSkeleton } from '@/components/ui/Skeleton';
 import { PropertyCard } from '@/components/ui/PropertyCard';
 import { Pagination } from '@/components/ui/Pagination';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Head } from '@/components/seo/Head';
 import { useProperties } from '@/hooks/useProperties';
 import { useCities } from '@/hooks/useCities';
 import { useDebounce } from '@/hooks';
@@ -53,7 +54,9 @@ export function Properties() {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <>
+      <Head title="Annonces immobilières" description="Découvrez toutes les annonces immobilières aux Gonaïves et en Haïti. Achetez, louez ou vendez des biens." />
+      <div className="bg-gray-50 min-h-screen">
       <div className="bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Annonces immobilières</h1>
@@ -284,5 +287,6 @@ export function Properties() {
         )}
       </div>
     </div>
+    </>
   );
 }

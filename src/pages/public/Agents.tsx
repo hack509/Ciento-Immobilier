@@ -29,6 +29,8 @@ export function Agents() {
                     src={agent.profile.avatar_url}
                     alt={`${agent.profile.first_name} ${agent.profile.last_name}`}
                     className="w-20 h-20 rounded-full mx-auto mb-3 object-cover"
+                    loading="lazy"
+                    decoding="async"
                   />
                 ) : (
                   <div className="w-20 h-20 bg-secondary-100 rounded-full mx-auto mb-3 flex items-center justify-center text-secondary-700 font-medium text-xl">

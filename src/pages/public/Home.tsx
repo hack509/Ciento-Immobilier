@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/Badge';
 import { PropertyCard } from '@/components/ui/PropertyCard';
 import { PropertyCardSkeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Head } from '@/components/seo/Head';
 import { useFeaturedProperties } from '@/hooks/useProperties';
 import { useCategories } from '@/hooks/useCategories';
 
@@ -37,6 +38,10 @@ export function Home() {
 
   return (
     <div>
+      <Head
+        title="Accueil"
+        description="Achetez, louez ou vendez des biens immobiliers aux Gonaïves, Artibonite, Haïti. La première plateforme immobilière des Gonaïves."
+      />
       {/* Hero — Cinematic real-estate hero with image background */}
       <section className="relative min-h-[500px] sm:min-h-[600px] lg:min-h-[720px] overflow-hidden">
         {/* Background Image */}

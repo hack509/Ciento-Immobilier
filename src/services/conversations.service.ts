@@ -1,9 +1,9 @@
 import { supabase } from './supabase';
-import type { Conversation, Message } from '@/types';
+import type { Conversation, Message, Profile } from '@/types';
 
 class ConversationsService {
   async getAll(): Promise<Conversation[]> {
-    const { data, error } = await supabase
+    const { data: rawData, error } = await supabase
       .from('conversations')
       .select(`
         id,
@@ -25,6 +25,7 @@ class ConversationsService {
 
     if (error) throw error;
 
+    const data = rawData as unknown as Conversation[] | null;
     const conversations = (data || []) as Conversation[];
 
     // Extract last message from array (Supabase returns array for FK refs)
@@ -32,13 +33,13 @@ class ConversationsService {
       ...conv,
       last_message: Array.isArray(conv.last_message) ? conv.last_message[0] : conv.last_message,
       participants: Array.isArray(conv.participants)
-        ? conv.participants.map((p: unknown) => (p as { user: import('@/types').Profile }).user)
+        ? conv.participants.map((p: unknown) => (p as { user: Profile }).user)
         : [],
     }));
   }
 
   async getById(conversationId: string): Promise<Conversation | null> {
-    const { data, error } = await supabase
+    const { data: rawData, error } = await supabase
       .from('conversations')
       .select(`
         id,
@@ -54,12 +55,15 @@ class ConversationsService {
 
     if (error) return null;
 
+    const data = rawData as unknown as Conversation | null;
+    if (!data) return null;
+
     return {
       ...data,
       participants: Array.isArray(data.participants)
-        ? data.participants.map((p: unknown) => (p as { user: import('@/types').Profile }).user)
+        ? data.participants.map((p: unknown) => (p as { user: Profile }).user)
         : [],
-    } as Conversation;
+    };
   }
 
   async getMessages(conversationId: string): Promise<Message[]> {
@@ -77,7 +81,7 @@ class ConversationsService {
   }
 
   async create(propertyId: string | null, participantIds: string[]): Promise<Conversation> {
-    const { data: conv, error: convError } = await supabase
+    const { data: rawConv, error: convError } = await supabase
       .from('conversations')
       .insert({ property_id: propertyId })
       .select()
@@ -85,6 +89,7 @@ class ConversationsService {
 
     if (convError) throw convError;
 
+    const conv = rawConv as unknown as Conversation;
     const participants = participantIds.map((userId) => ({
       conversation_id: conv.id,
       user_id: userId,

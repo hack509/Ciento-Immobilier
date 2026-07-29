@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
-import { Upload, X, Star, GripVertical, Image as ImageIcon } from 'lucide-react';
+import { Upload, X, Star, Image as ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ImageUploadProps {
@@ -101,7 +101,7 @@ export function ImageUpload({
 
       {images.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-          {images.map((image, index) => (
+          {images.map((image) => (
             <div
               key={image.id}
               className={cn(
@@ -114,7 +114,7 @@ export function ImageUpload({
                   <div className="w-6 h-6 border-2 border-secondary-300 border-t-secondary-500 rounded-full animate-spin" />
                 </div>
               ) : (
-                <img src={image.url} alt={image.alt_text || ''} className="w-full h-full object-cover" />
+                <img src={image.url} alt={image.alt_text || ''} className="w-full h-full object-cover" loading="lazy" />
               )}
 
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors">
