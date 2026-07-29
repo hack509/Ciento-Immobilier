@@ -32,19 +32,6 @@ class AuthService {
 
     if (error) throw error;
 
-    if (data.user) {
-      const { error: profileError } = await supabase.from('profiles').insert({
-        id: data.user.id,
-        first_name: params.first_name,
-        last_name: params.last_name,
-        email: params.email,
-        phone: params.phone,
-        role: params.role || 'client',
-      });
-
-      if (profileError) throw profileError;
-    }
-
     return data;
   }
 
