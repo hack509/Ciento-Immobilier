@@ -123,7 +123,7 @@ export function Properties() {
             </select>
             <button
               onClick={resetFilters}
-              className="px-4 py-2.5 rounded-lg border border-gray-300 text-sm text-gray-600 hover:bg-gray-50 flex items-center gap-2"
+              className="px-4 py-2.5 rounded-lg border border-gray-300 text-sm text-gray-600 hover:bg-gray-50 flex items-center gap-2 min-h-[44px]"
             >
               <SlidersHorizontal className="w-4 h-4" />
               Réinitialiser
@@ -146,7 +146,7 @@ export function Properties() {
           <div className="flex gap-2">
             <button
               onClick={() => setMobileFiltersOpen(true)}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 min-h-[44px]"
             >
               <SlidersHorizontal className="w-4 h-4" />
               Filtres
@@ -159,7 +159,7 @@ export function Properties() {
             {activeFilterCount > 0 && (
               <button
                 onClick={resetFilters}
-                className="px-4 py-2.5 rounded-lg border border-gray-300 text-sm text-gray-600 bg-white hover:bg-gray-50"
+                className="px-4 py-2.5 rounded-lg border border-gray-300 text-sm text-gray-600 bg-white hover:bg-gray-50 min-h-[44px]"
               >
                 Tout effacer
               </button>
@@ -174,7 +174,7 @@ export function Properties() {
             <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[85vh] overflow-y-auto">
               <div className="sticky top-0 bg-white px-4 py-3 border-b border-gray-100 flex items-center justify-between">
                 <h3 className="font-semibold text-gray-900">Filtres</h3>
-                <button onClick={() => setMobileFiltersOpen(false)} className="p-1 rounded-lg hover:bg-gray-100">
+                <button onClick={() => setMobileFiltersOpen(false)} className="p-2 rounded-lg hover:bg-gray-100 min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Fermer les filtres">
                   <X className="w-5 h-5 text-gray-500" />
                 </button>
               </div>
@@ -238,13 +238,13 @@ export function Properties() {
               <div className="sticky bottom-0 bg-white px-4 py-3 border-t border-gray-100 flex gap-3">
                 <button
                   onClick={resetFilters}
-                  className="flex-1 px-4 py-2.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  className="flex-1 px-4 py-2.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 min-h-[44px]"
                 >
                   Réinitialiser
                 </button>
                 <button
                   onClick={() => { setPage(1); setMobileFiltersOpen(false); }}
-                  className="flex-1 px-4 py-2.5 rounded-lg bg-secondary-500 text-white text-sm font-semibold hover:bg-secondary-600"
+                  className="flex-1 px-4 py-2.5 rounded-lg bg-secondary-500 text-white text-sm font-semibold hover:bg-secondary-600 min-h-[44px]"
                 >
                   Voir les résultats
                 </button>

@@ -105,25 +105,32 @@ export function Register() {
               value={formData.phone}
               onChange={handleChange('phone')}
             />
-            <div className="relative">
-              <Input
-                label="Mot de passe"
-                type={showPassword ? 'text' : 'password'}
-                placeholder="8 caractères minimum"
-                icon={<Lock className="w-4 h-4" />}
-                value={formData.password}
-                onChange={handleChange('password')}
-                required
-                minLength={8}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-9 text-gray-400 hover:text-gray-600"
-                tabIndex={-1}
-              >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
+            <div>
+              <label htmlFor="register-password" className="block text-sm font-medium text-gray-700 mb-1">
+                Mot de passe
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  id="register-password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="8 caractères minimum"
+                  value={formData.password}
+                  onChange={handleChange('password')}
+                  required
+                  minLength={8}
+                  className="w-full rounded-lg border border-gray-300 bg-white pl-10 pr-10 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 transition-colors duration-200 focus:border-secondary-500 focus:outline-none focus:ring-2 focus:ring-secondary-500/20"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                  tabIndex={-1}
+                  aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
             <Input
               label="Confirmer le mot de passe"
