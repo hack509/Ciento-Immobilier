@@ -1,6 +1,8 @@
+import { getEnv } from './env';
+
 export const APP_NAME = 'Ciento-Immobilier';
 export const APP_DESCRIPTION = 'La première plateforme immobilière des Gonaïves, Haïti';
-export const APP_URL = import.meta.env.VITE_APP_URL || 'http://localhost:5173';
+export const APP_URL = getEnv().appUrl;
 
 export const CURRENCY = 'HTG';
 export const CURRENCY_SYMBOL = 'HTG';

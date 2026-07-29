@@ -6,7 +6,7 @@
 -- 1. TABLE
 -- =====================================================
 CREATE TABLE newsletter_subscribers (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   email TEXT UNIQUE NOT NULL,
   is_active BOOLEAN NOT NULL DEFAULT true,
   unsubscribed_at TIMESTAMPTZ,

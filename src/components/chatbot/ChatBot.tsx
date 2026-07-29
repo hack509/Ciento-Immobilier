@@ -47,18 +47,6 @@ export function ChatBot() {
     const messageText = text || input.trim();
     if (!messageText || isLoading) return;
 
-    if (!geminiService.isConfigured()) {
-      const botMsg: Message = {
-        id: generateId(),
-        role: 'bot',
-        content: 'Le service IA n\'est pas encore configuré. L\'administrateur doit ajouter une clé API Gemini dans les paramètres du serveur. En attendant, vous pouvez nous contacter directement pour vos questions immobilières.',
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, { id: generateId(), role: 'user', content: messageText, timestamp: new Date() }, botMsg]);
-      setInput('');
-      return;
-    }
-
     const userMsg: Message = {
       id: generateId(),
       role: 'user',

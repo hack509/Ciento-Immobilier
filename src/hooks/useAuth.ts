@@ -9,14 +9,14 @@ export function useAuthMutations() {
   const signInMutation = useMutation({
     mutationFn: (params: SignInParams) => signIn(params),
     onSuccess: () => {
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
     },
   });
 
   const signUpMutation = useMutation({
     mutationFn: (params: SignUpParams) => signUp(params),
     onSuccess: () => {
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
     },
   });
 

@@ -28,7 +28,7 @@ CREATE TABLE profiles (
 -- 2. CITIES
 -- =====================================================
 CREATE TABLE cities (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
   slug TEXT NOT NULL UNIQUE,
   department TEXT NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE cities (
 -- 3. NEIGHBORHOODS
 -- =====================================================
 CREATE TABLE neighborhoods (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   city_id UUID NOT NULL REFERENCES cities(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   slug TEXT NOT NULL,
@@ -57,21 +57,20 @@ CREATE TABLE neighborhoods (
 -- 4. CATEGORIES
 -- =====================================================
 CREATE TABLE categories (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
   slug TEXT NOT NULL UNIQUE,
   description TEXT,
   icon TEXT,
   is_active BOOLEAN NOT NULL DEFAULT true,
-  sort_order INT NOT NULL DEFAULT 0,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  sort_order INT NOT NULL DEFAULT 0
 );
 
 -- =====================================================
 -- 5. AMENITIES
 -- =====================================================
 CREATE TABLE amenities (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
   slug TEXT NOT NULL UNIQUE,
   icon TEXT,
@@ -84,7 +83,7 @@ CREATE TABLE amenities (
 -- 6. AGENCIES
 -- =====================================================
 CREATE TABLE agencies (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   owner_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   slug TEXT NOT NULL UNIQUE,
@@ -119,7 +118,7 @@ ALTER TABLE profiles
 -- 7. AGENTS
 -- =====================================================
 CREATE TABLE agents (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   profile_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   agency_id UUID REFERENCES agencies(id) ON DELETE SET NULL,
   license_number TEXT,
@@ -139,7 +138,7 @@ CREATE TABLE agents (
 -- 8. PROPERTIES
 -- =====================================================
 CREATE TABLE properties (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   owner_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   agent_id UUID REFERENCES agents(id) ON DELETE SET NULL,
   agency_id UUID REFERENCES agencies(id) ON DELETE SET NULL,
@@ -194,7 +193,7 @@ CREATE TABLE properties (
 -- 9. PROPERTY IMAGES
 -- =====================================================
 CREATE TABLE property_images (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   property_id UUID NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
   url TEXT NOT NULL,
   storage_path TEXT NOT NULL,
@@ -210,7 +209,7 @@ CREATE TABLE property_images (
 -- 10. PROPERTY VIDEOS
 -- =====================================================
 CREATE TABLE property_videos (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   property_id UUID NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
   url TEXT NOT NULL,
   storage_path TEXT,
@@ -234,7 +233,7 @@ CREATE TABLE property_amenities (
 -- 12. FAVORITES
 -- =====================================================
 CREATE TABLE favorites (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   property_id UUID NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -245,7 +244,7 @@ CREATE TABLE favorites (
 -- 13. APPOINTMENTS
 -- =====================================================
 CREATE TABLE appointments (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   property_id UUID NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   agent_id UUID REFERENCES agents(id) ON DELETE SET NULL,
@@ -263,7 +262,7 @@ CREATE TABLE appointments (
 -- 14. CONVERSATIONS
 -- =====================================================
 CREATE TABLE conversations (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   property_id UUID REFERENCES properties(id) ON DELETE SET NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -283,7 +282,7 @@ CREATE TABLE conversation_participants (
 -- 16. MESSAGES
 -- =====================================================
 CREATE TABLE messages (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   conversation_id UUID NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
   sender_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   content TEXT NOT NULL,
@@ -296,7 +295,7 @@ CREATE TABLE messages (
 -- 17. NOTIFICATIONS
 -- =====================================================
 CREATE TABLE notifications (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   type notification_type NOT NULL,
   title TEXT NOT NULL,
@@ -310,7 +309,7 @@ CREATE TABLE notifications (
 -- 18. REVIEWS
 -- =====================================================
 CREATE TABLE reviews (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   reviewer_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   target_id UUID NOT NULL,
   target_type review_target_type NOT NULL,
@@ -326,7 +325,7 @@ CREATE TABLE reviews (
 -- 19. BLOG POSTS
 -- =====================================================
 CREATE TABLE blog_posts (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   author_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   title TEXT NOT NULL,
   slug TEXT NOT NULL UNIQUE,
@@ -347,7 +346,7 @@ CREATE TABLE blog_posts (
 -- 20. TRANSACTIONS
 -- =====================================================
 CREATE TABLE transactions (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   property_id UUID NOT NULL REFERENCES properties(id) ON DELETE RESTRICT,
   buyer_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
   seller_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
@@ -367,7 +366,7 @@ CREATE TABLE transactions (
 -- 21. REPORTS
 -- =====================================================
 CREATE TABLE reports (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   reporter_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   target_type report_target_type NOT NULL,
   target_id UUID NOT NULL,
@@ -393,7 +392,7 @@ CREATE TABLE site_settings (
 -- 23. ACTIVITY LOGS
 -- =====================================================
 CREATE TABLE activity_logs (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
   action TEXT NOT NULL,
   entity_type TEXT,

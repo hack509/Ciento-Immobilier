@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, User, Phone } from 'lucide-react';
+import { Mail, Lock, User, Phone, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useAuth } from '@/contexts/AuthContext';
@@ -16,7 +16,7 @@ export function Register() {
     password: '',
     confirmPassword: '',
   });
-  const [showPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -102,16 +102,26 @@ export function Register() {
               value={formData.phone}
               onChange={handleChange('phone')}
             />
-            <Input
-              label="Mot de passe"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="8 caractères minimum"
-              icon={<Lock className="w-4 h-4" />}
-              value={formData.password}
-              onChange={handleChange('password')}
-              required
-              minLength={8}
-            />
+            <div className="relative">
+              <Input
+                label="Mot de passe"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="8 caractères minimum"
+                icon={<Lock className="w-4 h-4" />}
+                value={formData.password}
+                onChange={handleChange('password')}
+                required
+                minLength={8}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-9 text-gray-400 hover:text-gray-600"
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
             <Input
               label="Confirmer le mot de passe"
               type={showPassword ? 'text' : 'password'}

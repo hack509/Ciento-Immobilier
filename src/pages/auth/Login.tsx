@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useAuth } from '@/contexts/AuthContext';
@@ -11,7 +11,7 @@ export function Login() {
   const { signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState('');
@@ -71,15 +71,25 @@ export function Login() {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            <Input
-              label="Mot de passe"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="••••••••"
-              icon={<Lock className="w-4 h-4" />}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="relative">
+              <Input
+                label="Mot de passe"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                icon={<Lock className="w-4 h-4" />}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-9 text-gray-400 hover:text-gray-600"
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
             <div className="flex items-center justify-between">
               <label className="flex items-center gap-2 text-sm text-gray-600">
                 <input type="checkbox" className="rounded border-gray-300" />

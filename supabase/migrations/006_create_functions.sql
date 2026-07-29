@@ -208,7 +208,7 @@ BEGIN
   base_slug := generate_slug(NEW.title);
   final_slug := base_slug;
 
-  WHILE EXISTS (SELECT 1 FROM properties WHERE slug = final_slug AND id != COALESCE(NEW.id, uuid_generate_v4())) LOOP
+  WHILE EXISTS (SELECT 1 FROM properties WHERE slug = final_slug AND id != COALESCE(NEW.id, gen_random_uuid())) LOOP
     counter := counter + 1;
     final_slug := base_slug || '-' || counter;
   END LOOP;
@@ -235,7 +235,7 @@ BEGIN
   base_slug := generate_slug(NEW.name);
   final_slug := base_slug;
 
-  WHILE EXISTS (SELECT 1 FROM agencies WHERE slug = final_slug AND id != COALESCE(NEW.id, uuid_generate_v4())) LOOP
+  WHILE EXISTS (SELECT 1 FROM agencies WHERE slug = final_slug AND id != COALESCE(NEW.id, gen_random_uuid())) LOOP
     counter := counter + 1;
     final_slug := base_slug || '-' || counter;
   END LOOP;
@@ -262,7 +262,7 @@ BEGIN
   base_slug := generate_slug(NEW.title);
   final_slug := base_slug;
 
-  WHILE EXISTS (SELECT 1 FROM blog_posts WHERE slug = final_slug AND id != COALESCE(NEW.id, uuid_generate_v4())) LOOP
+  WHILE EXISTS (SELECT 1 FROM blog_posts WHERE slug = final_slug AND id != COALESCE(NEW.id, gen_random_uuid())) LOOP
     counter := counter + 1;
     final_slug := base_slug || '-' || counter;
   END LOOP;
