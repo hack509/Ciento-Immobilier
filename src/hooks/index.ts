@@ -8,7 +8,7 @@ export { useAgencies } from './useAgencies';
 export { useAgents } from './useAgents';
 export { useAuthMutations } from './useAuth';
 export { useFavorites, useFavoriteStatus, useToggleFavorite } from './useFavorites';
-export { useConversations, useMessages, useSendMessage, useMarkAsRead } from './useConversations';
+export { useConversations, useMessages, useSendMessage, useStartConversation, useMarkAsRead } from './useConversations';
 export { useOwnProperties, useCreateProperty, useUpdateProperty, useDeleteProperty, usePropertyAmenities } from './useProperties';
 export { useUploadPropertyImage, useDeletePropertyImage, useReorderImages } from './usePropertyMutations';
 export { useNotifications, useUnreadCount, useMarkNotificationRead, useMarkAllNotificationsRead } from './useNotifications';

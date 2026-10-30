@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -9,6 +9,10 @@ import { authService } from '@/services/auth.service';
 
 export function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  // Internal path to return to after login (set by ProtectedRoute or contact actions)
+  const from = (location.state as { from?: string } | null)?.from;
+  const redirectTo = from?.startsWith('/') && !from.startsWith('//') ? from : '/dashboard';
   const { signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,7 +27,7 @@ export function Login() {
     setError('');
     try {
       await signIn({ email, password });
-      navigate('/dashboard');
+      navigate(redirectTo, { replace: true });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erreur de connexion';
       setError(message);

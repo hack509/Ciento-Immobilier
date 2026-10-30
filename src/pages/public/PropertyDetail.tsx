@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { MapPin, BedDouble, Bath, Maximize, Building, Calendar, Eye, Heart, Share2, Phone, Mail, ChevronRight } from 'lucide-react';
+import { MapPin, BedDouble, Bath, Maximize, Building, Calendar, Eye, Heart, Share2, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Head } from '@/components/seo/Head';
+import { PropertyContactActions } from '@/components/property/PropertyContactActions';
 import { useProperty } from '@/hooks/useProperty';
 import { formatPrice, formatDate, getListingTypeLabel, getPropertyTypeLabel } from '@/lib/utils';
 
@@ -210,12 +211,7 @@ export function PropertyDetail() {
               ) : null}
 
               <div className="space-y-3">
-                <Button className="w-full" icon={<Phone className="w-4 h-4" />}>
-                  Appeler
-                </Button>
-                <Button variant="outline" className="w-full" icon={<Mail className="w-4 h-4" />}>
-                  Envoyer un message
-                </Button>
+                <PropertyContactActions property={property} />
                 <div className="grid grid-cols-2 gap-3">
                   <Button variant="ghost" className="w-full" icon={<Heart className="w-4 h-4" />}>
                     Favoris

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { MessageSquare, Send, ArrowLeft } from 'lucide-react';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
@@ -10,8 +11,10 @@ import type { Conversation, Message } from '@/types';
 export function Messages() {
   const { profile } = useAuth();
   const { data: conversations, isLoading } = useConversations();
-  const [selectedConv, setSelectedConv] = useState<string | null>(null);
-  const [showMobileMessages, setShowMobileMessages] = useState(false);
+  const [searchParams] = useSearchParams();
+  const initialConv = searchParams.get('conversation');
+  const [selectedConv, setSelectedConv] = useState<string | null>(initialConv);
+  const [showMobileMessages, setShowMobileMessages] = useState(Boolean(initialConv));
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { data: messages } = useMessages(selectedConv || '');
   const sendMessage = useSendMessage();
@@ -24,14 +27,22 @@ export function Messages() {
     markAsRead.mutate(convId);
   };
 
+  // Conversation opened from a link (e.g. "Envoyer un message" on a listing)
+  const { mutate: markConversationRead } = markAsRead;
+  useEffect(() => {
+    if (initialConv) markConversationRead(initialConv);
+  }, [initialConv, markConversationRead]);
+
   const handleBackToList = () => {
     setShowMobileMessages(false);
   };
 
   const handleSend = () => {
     if (!newMessage.trim() || !selectedConv) return;
-    sendMessage.mutate({ conversationId: selectedConv, content: newMessage.trim() });
-    setNewMessage('');
+    sendMessage.mutate(
+      { conversationId: selectedConv, content: newMessage.trim() },
+      { onSuccess: () => setNewMessage('') }
+    );
   };
 
   const getOtherParticipant = (conv: Conversation) => {
@@ -176,12 +187,18 @@ export function Messages() {
                     />
                     <button
                       onClick={handleSend}
-                      disabled={!newMessage.trim()}
+                      disabled={!newMessage.trim() || sendMessage.isPending}
+                      aria-label="Envoyer le message"
                       className="p-2.5 bg-secondary-500 text-white rounded-lg hover:bg-secondary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       <Send className="w-4 h-4" />
                     </button>
                   </div>
+                  {sendMessage.isError && (
+                    <p className="text-xs text-danger-600 mt-2" role="alert">
+                      Le message n&apos;a pas pu être envoyé. Veuillez réessayer.
+                    </p>
+                  )}
                 </div>
               </>
             ) : (
