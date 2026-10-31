@@ -47,7 +47,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, className }:
             className={cn(
               'min-w-[36px] h-9 rounded-lg text-sm font-medium transition-colors',
               page === currentPage
-                ? 'bg-secondary-500 text-white'
+                ? 'bg-secondary-500 text-primary-900'
                 : 'text-gray-600 hover:bg-gray-100'
             )}
             aria-current={page === currentPage ? 'page' : undefined}

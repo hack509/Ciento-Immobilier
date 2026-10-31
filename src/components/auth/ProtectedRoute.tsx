@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import type { UserRole } from '@/types';
 
@@ -19,13 +19,14 @@ function LoadingScreen() {
 
 export function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
   const { isAuthenticated, isLoading, profile } = useAuth();
+  const location = useLocation();
 
   if (isLoading) {
     return <LoadingScreen />;
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/auth/connexion" replace />;
+    return <Navigate to="/auth/connexion" replace state={{ from: location.pathname + location.search }} />;
   }
 
   if (allowedRoles && profile && !allowedRoles.includes(profile.role)) {

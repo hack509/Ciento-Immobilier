@@ -12,6 +12,14 @@ export interface Database {
         Args: { property_id: string };
         Returns: unknown;
       };
+      start_conversation: {
+        Args: { p_recipient_id: string; p_property_id?: string | null };
+        Returns: string;
+      };
+      mark_conversation_read: {
+        Args: { p_conversation_id: string };
+        Returns: undefined;
+      };
     };
   };
 }

@@ -14,7 +14,7 @@ export function Settings() {
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 bg-secondary-50 rounded-lg flex items-center justify-center">
-              <Globe className="w-5 h-5 text-secondary-600" />
+              <Globe className="w-5 h-5 text-secondary-700" />
             </div>
             <div>
               <h2 className="font-semibold text-gray-900">Langue</h2>
@@ -22,7 +22,7 @@ export function Settings() {
             </div>
           </div>
           <div className="flex gap-3">
-            <button className="px-4 py-2 rounded-lg bg-secondary-500 text-white text-sm font-medium">
+            <button className="px-4 py-2 rounded-lg bg-secondary-500 text-primary-900 text-sm font-medium">
               Français
             </button>
             <button className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 text-sm font-medium hover:bg-gray-50">
@@ -49,7 +49,7 @@ export function Settings() {
             </div>
             <div className="flex items-center justify-between py-2">
               <span className="text-sm text-gray-600">Mot de passe</span>
-              <button className="text-sm text-secondary-600 hover:text-secondary-700 font-medium">
+              <button className="text-sm text-secondary-700 hover:text-secondary-700 font-medium">
                 Changer le mot de passe
               </button>
             </div>
@@ -79,7 +79,7 @@ export function Settings() {
                 <input
                   type="checkbox"
                   defaultChecked={item.defaultChecked}
-                  className="rounded border-gray-300 text-secondary-600 focus:ring-secondary-500"
+                  className="rounded border-gray-300 text-secondary-700 focus:ring-secondary-500"
                 />
               </label>
             ))}

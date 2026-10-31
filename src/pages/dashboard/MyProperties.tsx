@@ -95,7 +95,7 @@ export function MyProperties() {
                             <Link
                               to={`/annonces/${property.city?.slug || 'inconnu'}/${property.slug}`}
                               target="_blank"
-                              className="p-1.5 rounded-lg text-gray-400 hover:text-secondary-600 hover:bg-secondary-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                              className="p-1.5 rounded-lg text-gray-400 hover:text-secondary-700 hover:bg-secondary-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
                               title="Voir"
                             >
                               <Eye className="w-4 h-4" />
@@ -103,7 +103,7 @@ export function MyProperties() {
                           )}
                           <Link
                             to={`/dashboard/annonces/${property.id}/modifier`}
-                            className="p-1.5 rounded-lg text-gray-400 hover:text-secondary-600 hover:bg-secondary-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                            className="p-1.5 rounded-lg text-gray-400 hover:text-secondary-700 hover:bg-secondary-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
                             title="Modifier"
                           >
                             <Edit className="w-4 h-4" />
@@ -139,7 +139,7 @@ export function MyProperties() {
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-gray-900 text-sm leading-tight line-clamp-2">{property.title}</div>
                     <div className="text-xs text-gray-500 mt-0.5">{property.city?.name}</div>
-                    <div className="text-sm font-bold text-secondary-600 mt-1">{formatPrice(property.price)}</div>
+                    <div className="text-sm font-bold text-secondary-700 mt-1">{formatPrice(property.price)}</div>
                   </div>
                   <Badge variant={getStatusColor(property.status)} size="sm">
                     {property.status}

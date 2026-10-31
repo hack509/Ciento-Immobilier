@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -9,6 +9,10 @@ import { authService } from '@/services/auth.service';
 
 export function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  // Internal path to return to after login (set by ProtectedRoute or contact actions)
+  const from = (location.state as { from?: string } | null)?.from;
+  const redirectTo = from?.startsWith('/') && !from.startsWith('//') ? from : '/dashboard';
   const { signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,7 +27,7 @@ export function Login() {
     setError('');
     try {
       await signIn({ email, password });
-      navigate('/dashboard');
+      navigate(redirectTo, { replace: true });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erreur de connexion';
       setError(message);
@@ -105,11 +109,11 @@ export function Login() {
                 <input type="checkbox" className="rounded border-gray-300" />
                 Se souvenir de moi
               </label>
-              <Link to="/auth/mot-de-passe-oublie" className="text-sm text-secondary-600 hover:text-secondary-700 font-medium">
+              <Link to="/auth/mot-de-passe-oublie" className="text-sm text-secondary-700 hover:text-secondary-700 font-medium">
                 Mot de passe oublié ?
               </Link>
             </div>
-            <Button type="submit" className="w-full bg-secondary-500 hover:bg-secondary-600 text-white font-semibold" size="lg" isLoading={isLoading}>
+            <Button type="submit" className="w-full bg-secondary-500 hover:bg-secondary-400 text-primary-900 font-semibold" size="lg" isLoading={isLoading}>
               Se connecter
             </Button>
           </form>
@@ -149,7 +153,7 @@ export function Login() {
 
         <p className="text-center mt-6 text-sm text-gray-500">
           Pas encore de compte ?{' '}
-          <Link to="/auth/inscription" className="text-secondary-600 font-semibold hover:text-secondary-700">
+          <Link to="/auth/inscription" className="text-secondary-700 font-semibold hover:text-secondary-700">
             Créer un compte
           </Link>
         </p>

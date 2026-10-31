@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { MapPin, BedDouble, Bath, Maximize, Building, Calendar, Eye, Heart, Share2, Phone, Mail, ChevronRight } from 'lucide-react';
+import { MapPin, BedDouble, Bath, Maximize, Building, Calendar, Eye, Heart, Share2, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Head } from '@/components/seo/Head';
+import { PropertyContactActions } from '@/components/property/PropertyContactActions';
 import { useProperty } from '@/hooks/useProperty';
 import { formatPrice, formatDate, getListingTypeLabel, getPropertyTypeLabel } from '@/lib/utils';
 
@@ -56,9 +57,9 @@ export function PropertyDetail() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm text-gray-500 mb-6">
-          <Link to="/" className="hover:text-secondary-600">Accueil</Link>
+          <Link to="/" className="hover:text-secondary-700">Accueil</Link>
           <ChevronRight className="w-4 h-4" />
-          <Link to="/annonces" className="hover:text-secondary-600">Annonces</Link>
+          <Link to="/annonces" className="hover:text-secondary-700">Annonces</Link>
           <ChevronRight className="w-4 h-4" />
           <span className="text-gray-900">{property.title}</span>
         </nav>
@@ -123,24 +124,24 @@ export function PropertyDetail() {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
                 {property.bedrooms > 0 && (
                   <div className="bg-gray-50 rounded-xl p-4 text-center">
-                    <BedDouble className="w-6 h-6 text-secondary-600 mx-auto mb-1" />
+                    <BedDouble className="w-6 h-6 text-secondary-700 mx-auto mb-1" />
                     <span className="text-sm font-medium">{property.bedrooms} Chambres</span>
                   </div>
                 )}
                 {property.bathrooms > 0 && (
                   <div className="bg-gray-50 rounded-xl p-4 text-center">
-                    <Bath className="w-6 h-6 text-secondary-600 mx-auto mb-1" />
+                    <Bath className="w-6 h-6 text-secondary-700 mx-auto mb-1" />
                     <span className="text-sm font-medium">{property.bathrooms} SDB</span>
                   </div>
                 )}
                 {property.building_area && (
                   <div className="bg-gray-50 rounded-xl p-4 text-center">
-                    <Maximize className="w-6 h-6 text-secondary-600 mx-auto mb-1" />
+                    <Maximize className="w-6 h-6 text-secondary-700 mx-auto mb-1" />
                     <span className="text-sm font-medium">{property.building_area} m²</span>
                   </div>
                 )}
                 <div className="bg-gray-50 rounded-xl p-4 text-center">
-                  <Building className="w-6 h-6 text-secondary-600 mx-auto mb-1" />
+                  <Building className="w-6 h-6 text-secondary-700 mx-auto mb-1" />
                   <span className="text-sm font-medium">{property.floors} {property.floors > 1 ? 'Étages' : 'Étage'}</span>
                 </div>
               </div>
@@ -210,12 +211,7 @@ export function PropertyDetail() {
               ) : null}
 
               <div className="space-y-3">
-                <Button className="w-full" icon={<Phone className="w-4 h-4" />}>
-                  Appeler
-                </Button>
-                <Button variant="outline" className="w-full" icon={<Mail className="w-4 h-4" />}>
-                  Envoyer un message
-                </Button>
+                <PropertyContactActions property={property} />
                 <div className="grid grid-cols-2 gap-3">
                   <Button variant="ghost" className="w-full" icon={<Heart className="w-4 h-4" />}>
                     Favoris

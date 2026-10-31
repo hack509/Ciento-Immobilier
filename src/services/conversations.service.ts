@@ -21,7 +21,9 @@ class ConversationsService {
           sender:profiles(id, first_name, last_name)
         )
       `)
-      .order('updated_at', { ascending: false });
+      .order('updated_at', { ascending: false })
+      .order('created_at', { referencedTable: 'last_message', ascending: false })
+      .limit(1, { referencedTable: 'last_message' });
 
     if (error) throw error;
 
@@ -51,7 +53,7 @@ class ConversationsService {
         )
       `)
       .eq('id', conversationId)
-      .single();
+      .maybeSingle();
 
     if (error) return null;
 
@@ -80,28 +82,15 @@ class ConversationsService {
     return (data || []) as Message[];
   }
 
-  async create(propertyId: string | null, participantIds: string[]): Promise<Conversation> {
-    const { data: rawConv, error: convError } = await supabase
-      .from('conversations')
-      .insert({ property_id: propertyId })
-      .select()
-      .single();
+  /** Finds or creates the caller's conversation with a recipient; returns its id. */
+  async start(recipientId: string, propertyId: string | null = null): Promise<string> {
+    const { data, error } = await supabase.rpc('start_conversation', {
+      p_recipient_id: recipientId,
+      p_property_id: propertyId,
+    });
 
-    if (convError) throw convError;
-
-    const conv = rawConv as unknown as Conversation;
-    const participants = participantIds.map((userId) => ({
-      conversation_id: conv.id,
-      user_id: userId,
-    }));
-
-    const { error: partError } = await supabase
-      .from('conversation_participants')
-      .insert(participants);
-
-    if (partError) throw partError;
-
-    return conv as Conversation;
+    if (error) throw error;
+    return data;
   }
 
   async sendMessage(conversationId: string, content: string): Promise<Message> {
@@ -121,12 +110,11 @@ class ConversationsService {
     return data as Message;
   }
 
+  /** Marks messages received by the caller as read (own messages are untouched). */
   async markAsRead(conversationId: string): Promise<void> {
-    const { error } = await supabase
-      .from('messages')
-      .update({ status: 'read' })
-      .eq('conversation_id', conversationId)
-      .neq('status', 'read');
+    const { error } = await supabase.rpc('mark_conversation_read', {
+      p_conversation_id: conversationId,
+    });
 
     if (error) throw error;
   }

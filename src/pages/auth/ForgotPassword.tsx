@@ -76,7 +76,7 @@ export function ForgotPassword() {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            <Button type="submit" className="w-full bg-secondary-500 hover:bg-secondary-600 text-white font-semibold" size="lg" isLoading={isLoading}>
+            <Button type="submit" className="w-full bg-secondary-500 hover:bg-secondary-400 text-primary-900 font-semibold" size="lg" isLoading={isLoading}>
               Envoyer le lien
             </Button>
           </form>

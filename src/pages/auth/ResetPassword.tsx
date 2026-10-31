@@ -158,7 +158,7 @@ export function ResetPassword() {
         </div>
 
         <p className="text-center mt-6 text-sm text-gray-500">
-          <Link to="/auth/connexion" className="text-secondary-600 font-medium hover:text-secondary-700">
+          <Link to="/auth/connexion" className="text-secondary-700 font-medium hover:text-secondary-700">
             Retour à la connexion
           </Link>
         </p>

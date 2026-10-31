@@ -141,7 +141,7 @@ export function Register() {
               onChange={handleChange('confirmPassword')}
               required
             />
-            <Button type="submit" className="w-full bg-secondary-500 hover:bg-secondary-600 text-white font-semibold" size="lg" isLoading={isLoading}>
+            <Button type="submit" className="w-full bg-secondary-500 hover:bg-secondary-400 text-primary-900 font-semibold" size="lg" isLoading={isLoading}>
               Créer mon compte
             </Button>
           </form>
@@ -149,7 +149,7 @@ export function Register() {
 
         <p className="text-center mt-6 text-sm text-gray-500">
           Déjà un compte ?{' '}
-          <Link to="/auth/connexion" className="text-secondary-600 font-semibold hover:text-secondary-700">
+          <Link to="/auth/connexion" className="text-secondary-700 font-semibold hover:text-secondary-700">
             Se connecter
           </Link>
         </p>

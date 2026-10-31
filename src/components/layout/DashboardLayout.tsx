@@ -173,7 +173,7 @@ export function DashboardLayout() {
                   className={cn(
                     'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors relative min-h-[44px]',
                     active
-                      ? 'bg-secondary-50 text-secondary-600'
+                      ? 'bg-secondary-50 text-secondary-700'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-primary-700'
                   )}
                   aria-current={active ? 'page' : undefined}
@@ -181,7 +181,7 @@ export function DashboardLayout() {
                   <Icon className="w-4 h-4" />
                   {link.label}
                   {hasUnread && (
-                    <span className="absolute right-3 w-5 h-5 bg-secondary-500 text-white text-xs rounded-full flex items-center justify-center">
+                    <span className="absolute right-3 w-5 h-5 bg-secondary-500 text-primary-900 text-xs rounded-full flex items-center justify-center">
                       {unreadCount > 9 ? '9+' : unreadCount}
                     </span>
                   )}
@@ -225,7 +225,7 @@ export function DashboardLayout() {
                     className={cn(
                       'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors relative min-h-[44px]',
                       active
-                        ? 'bg-secondary-50 text-secondary-600'
+                        ? 'bg-secondary-50 text-secondary-700'
                         : 'text-gray-600 hover:bg-gray-50 hover:text-primary-700'
                     )}
                     aria-current={active ? 'page' : undefined}
@@ -233,7 +233,7 @@ export function DashboardLayout() {
                     <Icon className="w-4 h-4" />
                     {link.label}
                     {hasUnread && (
-                      <span className="absolute right-3 w-5 h-5 bg-secondary-500 text-white text-xs rounded-full flex items-center justify-center">
+                      <span className="absolute right-3 w-5 h-5 bg-secondary-500 text-primary-900 text-xs rounded-full flex items-center justify-center">
                         {unreadCount > 9 ? '9+' : unreadCount}
                       </span>
                     )}

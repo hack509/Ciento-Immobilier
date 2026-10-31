@@ -5,7 +5,6 @@
 - GitHub account with the repository pushed
 - Vercel account (vercel.com)
 - Supabase project with migrations applied
-- Gemini API key (for chatbot)
 
 ---
 
@@ -38,7 +37,6 @@ Add the following environment variables in the Vercel dashboard:
 | `VITE_SUPABASE_ANON_KEY` | Yes | Supabase Dashboard → Settings → API → anon/public key |
 | `VITE_APP_URL` | No | Your Vercel deployment URL (e.g., `https://ciento-immobilier.vercel.app`) |
 | `VITE_APP_NAME` | No | `Ciento-Immobilier` |
-| `VITE_GEMINI_PROXY_URL` | No | Defaults to `/api/gemini-proxy` (handled by Supabase) |
 
 Set them for all three environments: **Development**, **Preview**, **Production**.
 
@@ -66,16 +64,6 @@ npx supabase link --project-ref <your-project-ref>
 npx supabase db push
 ```
 
-### Edge Function (Gemini Chatbot)
-
-```bash
-# Deploy the function
-npx supabase functions deploy gemini-proxy
-
-# Set the Gemini API key as a secret
-npx supabase secrets set GEMINI_API_KEY=<your-gemini-api-key>
-```
-
 ### Storage Buckets
 
 Migration `010_create_storage_buckets.sql` creates the `property-images` bucket automatically during `npx supabase db push`.
@@ -90,10 +78,7 @@ Migration `010_create_storage_buckets.sql` creates the `property-images` bucket 
 | `VITE_SUPABASE_ANON_KEY` | Local `.env` | Vercel Dashboard | Vercel Dashboard | Yes | Supabase anon key |
 | `VITE_APP_URL` | `http://localhost:5173` | Preview URL | Production URL | No | App URL |
 | `VITE_APP_NAME` | `Ciento-Immobilier` | `Ciento-Immobilier` | `Ciento-Immobilier` | No | Display name |
-| `VITE_GEMINI_PROXY_URL` | `/api/gemini-proxy` | `/api/gemini-proxy` | `/api/gemini-proxy` | No | Gemini proxy URL |
-| `GEMINI_API_KEY` | Supabase secret | Supabase secret | Supabase secret | Yes* | Gemini API key |
 
-> *`GEMINI_API_KEY` is only required if using the AI ChatBot feature.
 
 ---
 
@@ -115,7 +100,6 @@ After deployment, verify:
 - [ ] Authentication (login/register/reset password)
 - [ ] Property listing and detail pages load
 - [ ] Dashboard pages load correctly
-- [ ] ChatBot responds (if configured)
 - [ ] Forms submit and validate
 - [ ] Images load and upload works
 - [ ] 404 page shows for unknown routes

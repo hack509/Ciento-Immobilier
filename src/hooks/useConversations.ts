@@ -33,6 +33,18 @@ export function useSendMessage() {
   });
 }
 
+export function useStartConversation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ recipientId, propertyId }: { recipientId: string; propertyId?: string | null }) =>
+      conversationsService.start(recipientId, propertyId ?? null),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+    },
+  });
+}
+
 export function useMarkAsRead() {
   const queryClient = useQueryClient();
 
