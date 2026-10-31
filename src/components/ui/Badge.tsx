@@ -9,11 +9,11 @@ interface BadgeProps {
 
 const variants = {
   default: 'bg-gray-100 text-gray-700',
-  primary: 'bg-secondary-100 text-secondary-700',
-  secondary: 'bg-secondary-100 text-secondary-700',
-  success: 'bg-success-50 text-success-600',
-  warning: 'bg-warning-50 text-warning-500',
-  danger: 'bg-danger-50 text-danger-500',
+  primary: 'bg-primary-100 text-primary-800',
+  secondary: 'bg-secondary-100 text-secondary-800',
+  success: 'bg-success-50 text-success-700',
+  warning: 'bg-warning-50 text-warning-700',
+  danger: 'bg-danger-50 text-danger-600',
 };
 
 const sizes = {

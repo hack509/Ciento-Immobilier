@@ -73,7 +73,7 @@ export function Sell() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link to="/auth/inscription">
-              <Button size="lg" className="bg-secondary-500 hover:bg-secondary-600 text-white font-semibold">
+              <Button size="lg" className="bg-secondary-500 hover:bg-secondary-400 text-primary-900 font-semibold">
                 Publier une annonce
                 <ArrowRight className="w-4 h-4" />
               </Button>
@@ -146,7 +146,7 @@ export function Sell() {
               <h2 className="text-3xl font-bold text-primary-800 mb-2">Annonces récentes à vendre</h2>
               <p className="text-gray-500">Découvrez ce que les autres vendent en ce moment</p>
             </div>
-            <Link to="/annonces?listing_type=sale" className="hidden sm:flex items-center gap-1 text-secondary-600 font-semibold hover:text-secondary-700">
+            <Link to="/annonces?listing_type=sale" className="hidden sm:flex items-center gap-1 text-secondary-700 font-semibold hover:text-secondary-700">
               Voir toutes <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -169,7 +169,7 @@ export function Sell() {
           </div>
           <div className="text-center mt-8 sm:hidden">
             <Link to="/annonces?listing_type=sale">
-              <Button variant="outline" className="border-secondary-500 text-secondary-600 hover:bg-secondary-50">
+              <Button variant="outline" className="border-secondary-500 text-secondary-700 hover:bg-secondary-50">
                 Voir toutes les annonces
                 <ArrowRight className="w-4 h-4" />
               </Button>
@@ -189,7 +189,7 @@ export function Sell() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/auth/inscription">
-              <Button size="lg" className="bg-secondary-500 hover:bg-secondary-600 text-white font-semibold">
+              <Button size="lg" className="bg-secondary-500 hover:bg-secondary-400 text-primary-900 font-semibold">
                 Commencer maintenant
                 <ArrowRight className="w-4 h-4" />
               </Button>

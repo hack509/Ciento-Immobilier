@@ -162,7 +162,7 @@ export function FAQ() {
                 onClick={() => setActiveSection(section.title)}
                 className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
                   activeSection === section.title
-                    ? 'bg-secondary-500 text-white'
+                    ? 'bg-secondary-500 text-primary-900'
                     : 'bg-white text-gray-600 border border-gray-200 hover:border-secondary-300'
                 }`}
               >
@@ -229,7 +229,7 @@ export function FAQ() {
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                 <a
                   href="mailto:info@ciento-immobilier.com"
-                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-secondary-500 hover:bg-secondary-600 text-white font-semibold rounded-lg transition-colors text-sm"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-secondary-500 hover:bg-secondary-400 text-primary-900 font-semibold rounded-lg transition-colors text-sm"
                 >
                   <Mail className="w-4 h-4" />
                   Nous écrire

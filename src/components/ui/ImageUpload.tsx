@@ -125,8 +125,8 @@ export function ImageUpload({
                     className={cn(
                       'p-1.5 rounded-lg text-xs transition-colors',
                       image.is_primary
-                        ? 'bg-secondary-500 text-white'
-                        : 'bg-white/90 text-gray-600 hover:bg-secondary-500 hover:text-white'
+                        ? 'bg-secondary-500 text-primary-900'
+                        : 'bg-white/90 text-gray-600 hover:bg-secondary-500 hover:text-primary-900'
                     )}
                     title="Image principale"
                   >
@@ -143,7 +143,7 @@ export function ImageUpload({
                 </div>
                 {image.is_primary && (
                   <div className="absolute bottom-2 left-2">
-                    <span className="px-2 py-0.5 bg-secondary-500 text-white text-xs font-medium rounded-full">
+                    <span className="px-2 py-0.5 bg-secondary-500 text-primary-900 text-xs font-medium rounded-full">
                       Principale
                     </span>
                   </div>

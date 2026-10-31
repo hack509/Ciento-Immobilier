@@ -63,7 +63,7 @@ export function Notifications() {
               {!notif.is_read && (
                 <button
                   onClick={() => markRead.mutate(notif.id)}
-                  className="p-1.5 rounded-lg text-gray-400 hover:text-secondary-600 hover:bg-secondary-50 transition-colors shrink-0"
+                  className="p-1.5 rounded-lg text-gray-400 hover:text-secondary-700 hover:bg-secondary-50 transition-colors shrink-0"
                   title="Marquer comme lu"
                 >
                   <Check className="w-4 h-4" />

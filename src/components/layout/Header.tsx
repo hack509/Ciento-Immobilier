@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Search, Heart, Home, Building2, Phone, ChevronDown, User } from 'lucide-react';
+import { Search, Heart, Home, Building2, Phone, ChevronDown, User, Plus, KeyRound, Sun } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Logo } from '@/components/brand/Logo';
 import { useAuth } from '@/contexts/AuthContext';
 
 export function Header() {
@@ -16,14 +17,15 @@ export function Header() {
   const navLinks = [
     { to: '/', label: 'Accueil', icon: Home },
     { to: '/annonces', label: 'Acheter', icon: Building2 },
-    { to: '/louer', label: 'Louer', icon: Building2 },
+    { to: '/louer', label: 'Louer', icon: KeyRound },
     { to: '/vendre', label: 'Vendre', icon: Building2 },
-    { to: '/airbnb', label: 'Airbnb', icon: Home },
+    { to: '/airbnb', label: 'Courte durée', icon: Sun },
     { to: '/agents', label: 'Agents', icon: User },
     { to: '/contact', label: 'Contact', icon: Phone },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) =>
+    path === '/' ? location.pathname === '/' : location.pathname.startsWith(path);
 
   const closeMenu = useCallback(() => {
     setMobileMenuOpen(false);
@@ -103,37 +105,29 @@ export function Header() {
   }, [location.pathname, closeMenu]);
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100">
+    <header className="sticky top-0 z-50 border-b border-gray-100">
+      {/* Blur lives on its own layer: backdrop-filter on <header> would become the
+          containing block of the fixed mobile drawer and break its positioning */}
+      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-white/90 backdrop-blur-md" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:h-18">
+        <div className="flex items-center justify-between h-16 lg:h-[72px]">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 shrink-0 min-h-[44px]">
-            <img
-              src="/logo.jpg"
-              alt="Ciento-Immobilier"
-              className="h-10 w-auto rounded-lg object-contain"
-            />
-            <div className="hidden sm:block">
-              <span className="text-primary-800 font-bold text-lg leading-tight block">
-                Ciento
-              </span>
-              <span className="text-secondary-500 font-semibold text-[11px] leading-tight block -mt-0.5">
-                Immobilier
-              </span>
-            </div>
+          <Link to="/" className="flex items-center shrink-0 min-h-[44px]" aria-label="Ciento-Immobilier, accueil">
+            <Logo />
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-0.5" aria-label="Navigation principale">
+          <nav className="hidden lg:flex items-center gap-1" aria-label="Navigation principale">
             {navLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
                 className={cn(
-                  'px-3 py-2.5 rounded-lg text-sm font-medium transition-colors min-h-[44px] flex items-center',
+                  'relative px-3 py-2.5 text-sm font-medium transition-colors min-h-[44px] flex items-center',
+                  'after:absolute after:left-3 after:right-3 after:bottom-1 after:h-0.5 after:rounded-full after:bg-secondary-500 after:transition-transform after:origin-left',
                   isActive(link.to)
-                    ? 'text-primary-700 bg-primary-50'
-                    : 'text-gray-600 hover:text-primary-700 hover:bg-gray-50'
+                    ? 'text-primary-900 after:scale-x-100'
+                    : 'text-gray-600 hover:text-primary-900 after:scale-x-0 hover:after:scale-x-100'
                 )}
                 aria-current={isActive(link.to) ? 'page' : undefined}
               >
@@ -182,7 +176,7 @@ export function Header() {
                 </button>
                 {profileOpen && (
                   <div
-                    className="absolute right-0 top-full mt-1 w-52 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+                    className="absolute right-0 top-full mt-1 w-52 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50 animate-in"
                     role="menu"
                     aria-label="Options du profil"
                   >
@@ -216,21 +210,21 @@ export function Header() {
                 )}
               </div>
             ) : (
-              <div className="flex items-center gap-1 sm:gap-2">
-                <Link
-                  to="/auth/connexion"
-                  className="px-3 sm:px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary-700 transition-colors min-h-[44px] flex items-center"
-                >
-                  Connexion
-                </Link>
-                <Link
-                  to="/auth/inscription"
-                  className="px-3 sm:px-4 py-2 bg-secondary-500 text-white text-sm font-semibold rounded-lg hover:bg-secondary-600 transition-colors shadow-sm min-h-[44px] flex items-center"
-                >
-                  S&apos;inscrire
-                </Link>
-              </div>
+              <Link
+                to="/auth/connexion"
+                className="hidden sm:flex px-3 sm:px-4 py-2 text-sm font-medium text-primary-800 hover:text-primary-900 transition-colors min-h-[44px] items-center gap-2"
+              >
+                <User className="w-4 h-4" />
+                Connexion
+              </Link>
             )}
+            <Link
+              to="/dashboard/annonces/nouvelle"
+              className="hidden md:flex px-4 py-2 bg-secondary-500 text-primary-900 text-sm font-semibold rounded-xl hover:bg-secondary-400 transition-colors shadow-sm min-h-[44px] items-center gap-1.5"
+            >
+              <Plus className="w-4 h-4" />
+              Publier une annonce
+            </Link>
 
             {/* Mobile Menu Button — Animated Hamburger */}
             <button
@@ -294,9 +288,8 @@ export function Header() {
       >
         {/* Drawer Header */}
         <div className="flex items-center justify-between px-4 h-16 border-b border-gray-100 shrink-0">
-          <Link to="/" className="flex items-center gap-2.5 min-h-[44px]" onClick={closeMenu}>
-            <img src="/logo.jpg" alt="Ciento-Immobilier" className="h-8 w-auto rounded-lg object-contain" />
-            <span className="text-primary-800 font-bold text-lg">Ciento</span>
+          <Link to="/" className="flex items-center min-h-[44px]" onClick={closeMenu} aria-label="Ciento-Immobilier, accueil">
+            <Logo />
           </Link>
           <button
             data-drawer-close
@@ -390,8 +383,8 @@ export function Header() {
                   className={cn(
                     'flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-colors min-h-[44px]',
                     isActive(link.to)
-                      ? 'text-primary-700 bg-primary-50'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-primary-700'
+                      ? 'text-primary-900 bg-secondary-50'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-primary-900'
                   )}
                   aria-current={isActive(link.to) ? 'page' : undefined}
                 >
@@ -416,9 +409,9 @@ export function Header() {
             <Link
               to="/auth/inscription"
               onClick={closeMenu}
-              className="flex items-center justify-center w-full px-4 py-3 bg-secondary-500 text-white text-sm font-semibold rounded-lg hover:bg-secondary-600 transition-colors min-h-[44px]"
+              className="flex items-center justify-center w-full px-4 py-3 bg-secondary-500 text-primary-900 text-sm font-semibold rounded-xl hover:bg-secondary-400 transition-colors min-h-[44px]"
             >
-              S&apos;inscrire
+              Créer un compte
             </Link>
           </div>
         )}

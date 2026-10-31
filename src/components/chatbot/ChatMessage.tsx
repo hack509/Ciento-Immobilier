@@ -18,7 +18,7 @@ export function ChatMessage({ message }: { message: Message }) {
         {isBot ? (
           <Bot className="w-4 h-4 text-primary-700" />
         ) : (
-          <User className="w-4 h-4 text-secondary-600" />
+          <User className="w-4 h-4 text-secondary-700" />
         )}
       </div>
       <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${

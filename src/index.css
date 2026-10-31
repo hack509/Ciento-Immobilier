@@ -1,31 +1,35 @@
 @import "tailwindcss";
 
 @theme {
-  /* Primary: Deep Blue */
-  --color-primary-50: #EFF6FF;
-  --color-primary-100: #DBEAFE;
-  --color-primary-200: #BFDBFE;
-  --color-primary-300: #93C5FD;
-  --color-primary-400: #60A5FA;
-  --color-primary-500: #2563EB;
-  --color-primary-600: #1D4ED8;
+  /* Primary: Navy — one coherent scale (700–900 unchanged from v1) */
+  --color-primary-50: #F3F6FB;
+  --color-primary-100: #E4EAF4;
+  --color-primary-200: #CBD6E6;
+  --color-primary-300: #A9B9D3;
+  --color-primary-400: #7690B8;
+  --color-primary-500: #46659A;
+  --color-primary-600: #2C4A7A;
   --color-primary-700: #1E3A5F;
   --color-primary-800: #0F2440;
   --color-primary-900: #0A1628;
 
-  /* Secondary: Golden Yellow */
-  --color-secondary-50: #FFFBEB;
-  --color-secondary-100: #FEF3C7;
-  --color-secondary-200: #FDE68A;
-  --color-secondary-300: #FCD34D;
-  --color-secondary-400: #FBBF24;
-  --color-secondary-500: #F59E0B;
-  --color-secondary-600: #D97706;
+  /* Secondary: Ciento gold — fills use navy text (9.8:1); 700+ for gold text on white */
+  --color-secondary-50: #FFFAEB;
+  --color-secondary-100: #FFF1C7;
+  --color-secondary-200: #FFE28F;
+  --color-secondary-300: #FFD45C;
+  --color-secondary-400: #FFC633;
+  --color-secondary-500: #F5B301;
+  --color-secondary-600: #DB9E00;
+  --color-secondary-700: #8A6300;
+  --color-secondary-800: #6B4C00;
+  --color-secondary-900: #4A3500;
 
   --color-success-50: #F0FDF4;
   --color-success-100: #DCFCE7;
   --color-success-500: #22C55E;
   --color-success-600: #16A34A;
+  --color-success-700: #15803D;
 
   --color-danger-50: #FEF2F2;
   --color-danger-100: #FEE2E2;
@@ -35,17 +39,48 @@
   --color-warning-50: #FFFBEB;
   --color-warning-100: #FEF3C7;
   --color-warning-500: #F59E0B;
+  --color-warning-700: #B45309;
 
-  --font-family-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-card: 0 1px 2px rgb(10 22 40 / 0.04), 0 4px 16px -4px rgb(10 22 40 / 0.08);
+  --shadow-card-hover: 0 2px 4px rgb(10 22 40 / 0.06), 0 16px 32px -8px rgb(10 22 40 / 0.16);
+  --shadow-float: 0 24px 48px -12px rgb(10 22 40 / 0.28);
+
+  --animate-fade-up: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 }
 
 @layer base {
   body {
     @apply font-sans bg-white text-gray-900;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+
+  h1, h2, h3 {
+    @apply font-display;
+    letter-spacing: -0.01em;
+    word-spacing: 0.04em;
   }
 
   * {
     @apply border-gray-200;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-secondary-500;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
@@ -67,16 +102,22 @@
     display: none;
   }
 
+  /* Dropdown entrance used by Header / menus */
   .animate-in {
-    animation: animate-in 0.2s ease-out;
+    animation: fade-up 0.2s ease-out both;
   }
 
-  .fade-in {
-    animation-fill-mode: both;
+  /* Custom chevron for appearance-none selects */
+  .select-chevron {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+    padding-right: 2.5rem;
   }
 
-  .slide-in-from-top-2 {
-    --tw-enter-translate-y: -0.5rem;
-    animation-name: slide-in-from-top-2;
+  /* Small uppercase label above section titles */
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.14em] text-secondary-700;
   }
 }

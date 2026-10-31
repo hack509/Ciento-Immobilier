@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 const statStyles = {
   primary: { bg: 'bg-primary-50', text: 'text-primary-600' },
   success: { bg: 'bg-success-50', text: 'text-success-600' },
-  secondary: { bg: 'bg-secondary-50', text: 'text-secondary-600' },
+  secondary: { bg: 'bg-secondary-50', text: 'text-secondary-700' },
 } as const;
 
 export function DashboardOverview() {

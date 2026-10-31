@@ -162,11 +162,11 @@ export function Messages() {
                         <div className={cn(
                           'max-w-[85%] sm:max-w-xs lg:max-w-md px-4 py-2.5 rounded-2xl text-sm',
                           isOwn
-                            ? 'bg-secondary-500 text-white rounded-br-md'
+                            ? 'bg-secondary-500 text-primary-900 rounded-br-md'
                             : 'bg-gray-100 text-gray-900 rounded-bl-md'
                         )}>
                           <p className="whitespace-pre-wrap break-words">{msg.content}</p>
-                          <p className={cn('text-xs mt-1', isOwn ? 'text-secondary-200' : 'text-gray-400')}>
+                          <p className={cn('text-xs mt-1', isOwn ? 'text-primary-900/60' : 'text-gray-400')}>
                             {formatRelativeTime(msg.created_at)}
                           </p>
                         </div>
@@ -189,7 +189,7 @@ export function Messages() {
                       onClick={handleSend}
                       disabled={!newMessage.trim() || sendMessage.isPending}
                       aria-label="Envoyer le message"
-                      className="p-2.5 bg-secondary-500 text-white rounded-lg hover:bg-secondary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="p-2.5 bg-secondary-500 text-primary-900 rounded-lg hover:bg-secondary-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       <Send className="w-4 h-4" />
                     </button>

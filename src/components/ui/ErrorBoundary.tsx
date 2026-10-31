@@ -49,7 +49,7 @@ export class ErrorBoundary extends Component<Props, State> {
             </p>
             <button
               onClick={this.handleReset}
-              className="inline-flex items-center px-6 py-2.5 bg-secondary-500 text-white font-semibold rounded-lg hover:bg-secondary-600 transition-colors"
+              className="inline-flex items-center px-6 py-2.5 bg-secondary-500 text-primary-900 font-semibold rounded-lg hover:bg-secondary-400 transition-colors"
             >
               Rafraîchir
             </button>

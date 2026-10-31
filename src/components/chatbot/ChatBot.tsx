@@ -173,7 +173,7 @@ export function ChatBot() {
                 <button
                   type="submit"
                   disabled={!input.trim() || isLoading}
-                  className="w-10 h-10 bg-secondary-500 hover:bg-secondary-600 disabled:opacity-30 disabled:cursor-not-allowed text-white rounded-xl flex items-center justify-center transition-colors shrink-0"
+                  className="w-10 h-10 bg-secondary-500 hover:bg-secondary-400 disabled:opacity-30 disabled:cursor-not-allowed text-primary-900 rounded-xl flex items-center justify-center transition-colors shrink-0"
                 >
                   <Send className="w-4 h-4" />
                 </button>
@@ -251,7 +251,7 @@ export function ChatBot() {
                 <button
                   type="submit"
                   disabled={!input.trim() || isLoading}
-                  className="w-10 h-10 bg-secondary-500 hover:bg-secondary-600 disabled:opacity-30 disabled:cursor-not-allowed text-white rounded-xl flex items-center justify-center transition-colors shrink-0"
+                  className="w-10 h-10 bg-secondary-500 hover:bg-secondary-400 disabled:opacity-30 disabled:cursor-not-allowed text-primary-900 rounded-xl flex items-center justify-center transition-colors shrink-0"
                 >
                   <Send className="w-4 h-4" />
                 </button>

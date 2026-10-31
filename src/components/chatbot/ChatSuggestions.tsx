@@ -30,7 +30,7 @@ export function ChatSuggestions({ onSelect }: { onSelect: (text: string) => void
             <button
               key={s.text}
               onClick={() => onSelect(s.text)}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs text-gray-600 hover:border-secondary-400 hover:text-secondary-600 transition-colors text-left"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs text-gray-600 hover:border-secondary-400 hover:text-secondary-700 transition-colors text-left"
             >
               <Icon className="w-3 h-3 shrink-0" />
               {s.text}
