@@ -79,7 +79,7 @@ export function Sell() {
               </Button>
             </Link>
             <Link to="/annonces?listing_type=sale">
-              <Button variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10">
+              <Button variant="outlineLight" size="lg">
                 Voir les annonces à vendre
               </Button>
             </Link>
@@ -169,7 +169,7 @@ export function Sell() {
           </div>
           <div className="text-center mt-8 sm:hidden">
             <Link to="/annonces?listing_type=sale">
-              <Button variant="outline" className="border-secondary-500 text-secondary-700 hover:bg-secondary-50">
+              <Button variant="outline">
                 Voir toutes les annonces
                 <ArrowRight className="w-4 h-4" />
               </Button>
@@ -195,7 +195,7 @@ export function Sell() {
               </Button>
             </Link>
             <Link to="/contact">
-              <Button variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10">
+              <Button variant="outlineLight" size="lg">
                 Nous contacter
               </Button>
             </Link>

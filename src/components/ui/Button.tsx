@@ -2,7 +2,8 @@ import { type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+  /** `outlineLight` is the secondary action on dark (navy) backgrounds. */
+  variant?: 'primary' | 'secondary' | 'outline' | 'outlineLight' | 'ghost' | 'danger';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
   icon?: ReactNode;
@@ -12,8 +13,9 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const variants = {
   primary: 'bg-secondary-500 text-primary-900 font-semibold hover:bg-secondary-400 active:bg-secondary-600 shadow-sm',
   secondary: 'bg-primary-800 text-white font-semibold hover:bg-primary-900 active:bg-primary-900 shadow-sm',
-  outline: 'border border-primary-200 bg-white text-primary-800 hover:border-primary-800 active:bg-primary-50',
-  ghost: 'text-gray-600 hover:bg-gray-100 active:bg-gray-200',
+  outline: 'border border-primary-200 bg-primary-50 text-primary-800 font-semibold hover:bg-primary-100 hover:border-primary-300 active:bg-primary-200',
+  outlineLight: 'border border-white/40 bg-white/10 text-white font-semibold hover:bg-white/20 active:bg-white/25',
+  ghost: 'text-primary-700 hover:bg-primary-50 active:bg-primary-100',
   danger: 'bg-danger-500 text-white hover:bg-danger-600 active:bg-danger-600 shadow-sm',
 };
 

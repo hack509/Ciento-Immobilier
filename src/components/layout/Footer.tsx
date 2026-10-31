@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Phone, Mail, Send, CheckCircle } from 'lucide-react';
-import { Logo } from '@/components/brand/Logo';
 import { useSubscribeNewsletter } from '@/hooks/useNewsletter';
 
 export function Footer() {
@@ -70,8 +69,12 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
           <div>
-            <Link to="/" className="inline-flex mb-5" aria-label="Ciento-Immobilier, accueil">
-              <Logo variant="light" />
+            <Link to="/" className="flex items-center gap-2.5 mb-4">
+              <img src="/logo.jpg" alt="Ciento-Immobilier" className="h-10 w-auto rounded-lg object-contain" />
+              <div>
+                <span className="font-bold text-lg block leading-tight">Ciento</span>
+                <span className="text-secondary-400 font-semibold text-[11px] block leading-tight -mt-0.5">Immobilier</span>
+              </div>
             </Link>
             <p className="text-primary-300 text-sm leading-relaxed mb-4">
               La première plateforme immobilière des Gonaïves.

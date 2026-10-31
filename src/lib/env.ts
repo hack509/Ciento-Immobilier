@@ -3,7 +3,6 @@ interface EnvConfig {
   supabaseAnonKey: string;
   appUrl: string;
   appName: string;
-  geminiProxyUrl: string;
 }
 
 function getEnvVar(name: string, fallback = ''): string {
@@ -30,7 +29,6 @@ export function getEnv(): EnvConfig {
     supabaseAnonKey,
     appUrl: getEnvVar('VITE_APP_URL', 'http://localhost:5173'),
     appName: getEnvVar('VITE_APP_NAME', 'Ciento-Immobilier'),
-    geminiProxyUrl: getEnvVar('VITE_GEMINI_PROXY_URL', '/api/gemini-proxy'),
   };
   return cached;
 }

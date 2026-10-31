@@ -22,7 +22,6 @@ Real estate platform built with React, TypeScript, and Vite. La première platef
 src/
 ├── components/
 │   ├── auth/          # ProtectedRoute
-│   ├── chatbot/       # Gemini AI chat
 │   ├── layout/        # Header, Footer, PublicLayout, DashboardLayout
 │   ├── seo/           # Head component (Helmet wrapper)
 │   └── ui/            # Button, Card, Input, Modal, Badge, etc.
@@ -36,9 +35,7 @@ src/
 ├── providers/         # AppProviders (QueryClient, Router, Helmet, ErrorBoundary)
 └── services/          # Supabase client & data access layer
 supabase/
-├── functions/
-│   └── gemini-proxy/  # Edge Function for Gemini AI chatbot
-└── migrations/        # 010 database migrations
+└── migrations/        # Database migrations
     ├── 001-007        # Core schema (extensions, enums, tables, indexes, RLS, functions, seed)
     ├── 008-009        # Newsletter feature
     └── 010            # Storage buckets
@@ -90,12 +87,6 @@ npx supabase link --project-ref <your-project-ref>
 # Push migrations
 npx supabase db push
 
-# Set Edge Function secrets
-npx supabase secrets set GEMINI_API_KEY=<your-gemini-api-key>
-
-# Deploy Edge Function
-npx supabase functions deploy gemini-proxy
-
 # Verify
 npx supabase db dump --file schema.sql
 ```
@@ -110,8 +101,6 @@ See [.env.example](.env.example) for all required variables.
 | `VITE_SUPABASE_ANON_KEY` | Yes | Supabase anon/public key |
 | `VITE_APP_URL` | No | App URL for emails/SEO |
 | `VITE_APP_NAME` | No | App display name |
-| `VITE_GEMINI_PROXY_URL` | No | Gemini Edge Function URL |
-| `GEMINI_API_KEY` | Yes* | Gemini API key (Edge Function secret) |
 
 ## Deployment
 
@@ -126,5 +115,3 @@ See [.env.example](.env.example) for all required variables.
 ### Supabase
 
 1. Run migrations: `npx supabase db push`
-2. Deploy Edge Function: `npx supabase functions deploy gemini-proxy`
-3. Set secrets: `npx supabase secrets set GEMINI_API_KEY=<key>`

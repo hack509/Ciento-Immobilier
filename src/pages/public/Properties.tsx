@@ -18,8 +18,11 @@ const FILTER_KEYS = ['q', 'property_type', 'listing_type', 'city_id', 'min_price
 type FilterKey = (typeof FILTER_KEYS)[number];
 
 const selectClass =
-  'select-chevron w-full appearance-none rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-primary-900 ' +
-  'hover:border-gray-300 focus:border-secondary-500 focus:outline-none focus:ring-4 focus:ring-secondary-500/20 transition-colors';
+  'select-chevron w-full appearance-none rounded-xl border border-primary-200 bg-primary-50 px-4 py-3 text-sm font-semibold text-primary-900 ' +
+  'hover:bg-primary-100 hover:border-primary-300 focus:bg-white focus:border-secondary-500 focus:outline-none focus:ring-4 focus:ring-secondary-500/25 transition-colors cursor-pointer';
+
+/** Active filters get a gold tint so the current selection stands out. */
+const activeSelectClass = 'border-secondary-500 bg-secondary-50 hover:bg-secondary-100';
 
 const toNumber = (value: string | null) => (value === null || value === '' ? undefined : Number(value));
 
@@ -92,25 +95,25 @@ export function Properties() {
   const filterFields = (
     <>
       <label className="block">
-        <select value={propertyType} onChange={(e) => updateFilters({ property_type: e.target.value })} className={selectClass} aria-label="Type de bien">
+        <select value={propertyType} onChange={(e) => updateFilters({ property_type: e.target.value })} className={cn(selectClass, propertyType && activeSelectClass)} aria-label="Type de bien">
           <option value="">Tous les types</option>
           {PROPERTY_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
         </select>
       </label>
       <label className="block">
-        <select value={listingType} onChange={(e) => updateFilters({ listing_type: e.target.value })} className={selectClass} aria-label="Type d'annonce">
+        <select value={listingType} onChange={(e) => updateFilters({ listing_type: e.target.value })} className={cn(selectClass, listingType && activeSelectClass)} aria-label="Type d'annonce">
           <option value="">Vente et location</option>
           {LISTING_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
         </select>
       </label>
       <label className="block">
-        <select value={cityId} onChange={(e) => updateFilters({ city_id: e.target.value })} className={selectClass} aria-label="Ville">
+        <select value={cityId} onChange={(e) => updateFilters({ city_id: e.target.value })} className={cn(selectClass, cityId && activeSelectClass)} aria-label="Ville">
           <option value="">Toutes les villes</option>
           {(cities || []).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
         </select>
       </label>
       <label className="block">
-        <select value={budgetIndex === -1 ? '' : String(budgetIndex)} onChange={(e) => setBudget(e.target.value)} className={selectClass} aria-label="Budget">
+        <select value={budgetIndex === -1 ? '' : String(budgetIndex)} onChange={(e) => setBudget(e.target.value)} className={cn(selectClass, budgetIndex !== -1 && activeSelectClass)} aria-label="Budget">
           <option value="">Tous les budgets</option>
           {PRICE_RANGES.map((r, i) => <option key={r.label} value={i}>{r.label}</option>)}
         </select>

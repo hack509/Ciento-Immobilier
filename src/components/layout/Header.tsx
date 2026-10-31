@@ -2,7 +2,6 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Search, Heart, Home, Building2, Phone, ChevronDown, User, Plus, KeyRound, Sun } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Logo } from '@/components/brand/Logo';
 import { useAuth } from '@/contexts/AuthContext';
 
 export function Header() {
@@ -112,8 +111,20 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-[72px]">
           {/* Logo */}
-          <Link to="/" className="flex items-center shrink-0 min-h-[44px]" aria-label="Ciento-Immobilier, accueil">
-            <Logo />
+          <Link to="/" className="flex items-center gap-2.5 shrink-0 min-h-[44px]">
+            <img
+              src="/logo.jpg"
+              alt="Ciento-Immobilier"
+              className="h-10 w-auto rounded-lg object-contain"
+            />
+            <div className="hidden sm:block">
+              <span className="text-primary-800 font-bold text-lg leading-tight block">
+                Ciento
+              </span>
+              <span className="text-secondary-700 font-semibold text-[11px] leading-tight block -mt-0.5">
+                Immobilier
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Nav */}
@@ -288,8 +299,9 @@ export function Header() {
       >
         {/* Drawer Header */}
         <div className="flex items-center justify-between px-4 h-16 border-b border-gray-100 shrink-0">
-          <Link to="/" className="flex items-center min-h-[44px]" onClick={closeMenu} aria-label="Ciento-Immobilier, accueil">
-            <Logo />
+          <Link to="/" className="flex items-center gap-2.5 min-h-[44px]" onClick={closeMenu}>
+            <img src="/logo.jpg" alt="Ciento-Immobilier" className="h-8 w-auto rounded-lg object-contain" />
+            <span className="text-primary-800 font-bold text-lg">Ciento</span>
           </Link>
           <button
             data-drawer-close

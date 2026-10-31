@@ -74,18 +74,15 @@ export function Home() {
             alt=""
             aria-hidden="true"
             fetchPriority="high"
-            className="absolute inset-0 h-full w-full object-cover xl:left-auto xl:w-[54%] xl:[clip-path:polygon(16%_0,100%_0,100%_100%,2%_100%)]"
+            className="absolute inset-0 h-full w-full object-cover object-[70%_center]"
           />
         </picture>
-        {/* Readability: full overlay below xl; split layout with a gold edge from xl */}
-        <div className="absolute inset-0 bg-gradient-to-b from-primary-900/85 via-primary-900/75 to-primary-900/95 xl:hidden" />
-        <div
-          aria-hidden="true"
-          className="hidden xl:block absolute inset-y-0 right-0 w-[54%] bg-secondary-500 [clip-path:polygon(12.5%_0,16%_0,2%_100%,0_100%)]"
-        />
+        {/* Full-bleed background: navy from the left keeps the text readable, the house stays visible on the right */}
+        <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-r from-primary-900/95 via-primary-900/75 to-primary-900/10" />
+        <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-primary-900/70 via-transparent to-primary-900/30" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-16 sm:pt-20 sm:pb-24 xl:py-28">
-          <div className="max-w-xl xl:max-w-[520px] animate-fade-up">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-16 sm:pt-20 sm:pb-24 lg:py-28">
+          <div className="max-w-2xl animate-fade-up">
             <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-secondary-300 ring-1 ring-inset ring-white/15 mb-6">
               <span className="h-1.5 w-1.5 rounded-full bg-secondary-400" />
               Immobilier aux Gonaïves et partout en Haïti
@@ -103,7 +100,7 @@ export function Home() {
             <HeroSearch />
           </div>
 
-          <ul className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl xl:max-w-[560px]">
+          <ul className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl">
             {TRUST_POINTS.map(({ icon: Icon, title, desc }) => (
               <li key={title} className="flex items-center gap-3">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-inset ring-white/15">
@@ -224,7 +221,7 @@ export function Home() {
                     <Button size="lg" icon={<Plus className="w-4 h-4" />}>Publier une annonce</Button>
                   </Link>
                   <Link to="/contact">
-                    <Button size="lg" variant="ghost" className="text-white hover:bg-white/10 ring-1 ring-inset ring-white/20">
+                    <Button size="lg" variant="outlineLight">
                       Parler à un conseiller
                     </Button>
                   </Link>

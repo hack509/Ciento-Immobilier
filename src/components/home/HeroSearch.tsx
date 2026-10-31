@@ -23,16 +23,20 @@ interface FieldProps {
 function SearchField({ icon: Icon, label, value, onChange, children }: FieldProps) {
   return (
     <label className="relative flex-1 min-w-0 group">
-      <span className="sr-only">{label}</span>
-      <Icon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-primary-400 pointer-events-none" />
+      <span className="absolute left-12 top-2 text-[10px] font-semibold uppercase tracking-wider text-primary-500 pointer-events-none">
+        {label}
+      </span>
+      <span className="absolute left-2 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-lg bg-secondary-500 text-primary-900 pointer-events-none">
+        <Icon className="h-4 w-4" />
+      </span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full appearance-none bg-gray-50 hover:bg-gray-100 rounded-xl pl-10 pr-9 py-3.5 text-sm font-medium text-primary-900 border border-transparent focus:bg-white focus:border-secondary-500 focus:outline-none focus:ring-4 focus:ring-secondary-500/20 transition-colors cursor-pointer"
+        className="w-full appearance-none bg-primary-50 hover:bg-primary-100 rounded-xl pl-12 pr-9 pt-6 pb-2 text-sm font-semibold text-primary-900 border border-primary-200 group-hover:border-primary-300 focus:bg-white focus:border-secondary-500 focus:outline-none focus:ring-4 focus:ring-secondary-500/25 transition-colors cursor-pointer min-h-[52px]"
       >
         {children}
       </select>
-      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-500 pointer-events-none" />
     </label>
   );
 }
@@ -75,7 +79,7 @@ export function HeroSearch() {
                 'px-5 py-2.5 rounded-t-xl text-sm font-semibold transition-colors min-h-[44px]',
                 selected
                   ? 'bg-white text-primary-900'
-                  : 'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white'
+                  : 'bg-primary-800/80 text-white hover:bg-primary-700 ring-1 ring-inset ring-white/15'
               )}
             >
               {tab.label}
@@ -89,19 +93,19 @@ export function HeroSearch() {
         className="bg-white rounded-2xl rounded-tl-none p-2.5 shadow-float flex flex-col md:flex-row gap-2"
       >
         <SearchField icon={MapPin} label="Ville" value={cityId} onChange={setCityId}>
-          <option value="">Toutes les villes</option>
+          <option value="">Toutes</option>
           {(cities || []).map((c) => (
             <option key={c.id} value={c.id}>{c.name}</option>
           ))}
         </SearchField>
         <SearchField icon={HomeIcon} label="Type de bien" value={propertyType} onChange={setPropertyType}>
-          <option value="">Type de bien</option>
+          <option value="">Tous les types</option>
           {PROPERTY_TYPES.map((t) => (
             <option key={t.value} value={t.value}>{t.label}</option>
           ))}
         </SearchField>
         <SearchField icon={Wallet} label="Budget" value={budget} onChange={setBudget}>
-          <option value="">Budget</option>
+          <option value="">Tous budgets</option>
           {PRICE_RANGES.map((r, i) => (
             <option key={r.label} value={i}>{r.label}</option>
           ))}
