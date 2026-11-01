@@ -1,8 +1,27 @@
 import { supabase } from './supabase';
+import { storageService } from './storage.service';
 import type { Property, SearchFilters, PaginatedResponse, Amenity } from '@/types';
 import { ITEMS_PER_PAGE } from '@/lib/constants';
 
+type PropertyWithStorageImages = {
+  images?: { storage_path: string; url: string }[] | null;
+};
+
 class PropertiesService {
+  private async signImages<T extends PropertyWithStorageImages>(properties: T[]): Promise<T[]> {
+    return Promise.all(
+      properties.map(async (property) => ({
+        ...property,
+        images: await Promise.all(
+          (property.images || []).map(async (image) => ({
+            ...image,
+            url: await storageService.getSignedUrl(image.storage_path),
+          }))
+        ),
+      }))
+    );
+  }
+
   async getAll(filters: SearchFilters = {}): Promise<PaginatedResponse<Property>> {
     const page = filters.page || 1;
     const perPage = filters.per_page || ITEMS_PER_PAGE;
@@ -13,13 +32,13 @@ class PropertiesService {
       .from('properties')
       .select(`
         *,
-        owner:profiles!properties_owner_id_fkey(id, first_name, last_name, avatar_url),
-        agent:agents!properties_agent_id_fkey(id, profile:profiles(id, first_name, last_name, avatar_url)),
+        owner:public_profiles!properties_owner_id_fkey(id, first_name, last_name, avatar_url),
+        agent:agents!properties_agent_id_fkey(id, profile:public_profiles!agents_profile_id_fkey(id, first_name, last_name, avatar_url)),
         agency:agencies!properties_agency_id_fkey(id, name, slug, logo_url),
         category:categories!properties_category_id_fkey(id, name, slug),
         city:cities!properties_city_id_fkey(id, name, slug),
         neighborhood:neighborhoods!properties_neighborhood_id_fkey(id, name, slug),
-        images:property_images!property_images_property_id_fkey(url, alt_text, is_primary, sort_order)
+        images:property_images!property_images_property_id_fkey(url, storage_path, alt_text, is_primary, sort_order)
       `, { count: 'exact' })
       .eq('is_published', true)
       .eq('status', 'active');
@@ -47,7 +66,7 @@ class PropertiesService {
     if (error) throw error;
 
     return {
-      data: (data || []) as Property[],
+      data: await this.signImages(data || []) as Property[],
       count: count || 0,
       page,
       per_page: perPage,
@@ -60,13 +79,13 @@ class PropertiesService {
       .from('properties')
       .select(`
         *,
-        owner:profiles!properties_owner_id_fkey(id, first_name, last_name, avatar_url, phone),
-        agent:agents!properties_agent_id_fkey(id, profile:profiles(id, first_name, last_name, avatar_url, phone), license_number, experience_years),
+        owner:public_profiles!properties_owner_id_fkey(id, first_name, last_name, avatar_url),
+        agent:agents!properties_agent_id_fkey(id, profile:public_profiles!agents_profile_id_fkey(id, first_name, last_name, avatar_url), license_number, experience_years),
         agency:agencies!properties_agency_id_fkey(id, name, slug, logo_url, phone, email),
         category:categories!properties_category_id_fkey(id, name, slug),
         city:cities!properties_city_id_fkey(id, name, slug),
         neighborhood:neighborhoods!properties_neighborhood_id_fkey(id, name, slug),
-        images:property_images!property_images_property_id_fkey(url, alt_text, is_primary, sort_order),
+        images:property_images!property_images_property_id_fkey(url, storage_path, alt_text, is_primary, sort_order),
         amenities:property_amenities!property_amenities_property_id_fkey(amenity:amenities(id, name, slug, icon))
       `)
       .eq('slug', slug)
@@ -74,7 +93,8 @@ class PropertiesService {
       .single();
 
     if (error) return null;
-    return data as Property;
+    const [property] = await this.signImages([data]);
+    return property as Property;
   }
 
   async getById(id: string): Promise<Property | null> {
@@ -93,9 +113,9 @@ class PropertiesService {
       .from('properties')
       .select(`
         *,
-        owner:profiles!properties_owner_id_fkey(id, first_name, last_name),
+        owner:public_profiles!properties_owner_id_fkey(id, first_name, last_name),
         city:cities!properties_city_id_fkey(id, name, slug),
-        images:property_images!property_images_property_id_fkey(url, alt_text, is_primary, sort_order)
+        images:property_images!property_images_property_id_fkey(url, storage_path, alt_text, is_primary, sort_order)
       `)
       .eq('is_published', true)
       .eq('status', 'active')
@@ -104,7 +124,7 @@ class PropertiesService {
       .limit(limit);
 
     if (error) throw error;
-    return (data || []) as Property[];
+    return await this.signImages(data || []) as Property[];
   }
 
   async getRecent(limit: number = 8): Promise<Property[]> {
@@ -112,9 +132,9 @@ class PropertiesService {
       .from('properties')
       .select(`
         *,
-        owner:profiles!properties_owner_id_fkey(id, first_name, last_name),
+        owner:public_profiles!properties_owner_id_fkey(id, first_name, last_name),
         city:cities!properties_city_id_fkey(id, name, slug),
-        images:property_images!property_images_property_id_fkey(url, alt_text, is_primary, sort_order)
+        images:property_images!property_images_property_id_fkey(url, storage_path, alt_text, is_primary, sort_order)
       `)
       .eq('is_published', true)
       .eq('status', 'active')
@@ -122,7 +142,7 @@ class PropertiesService {
       .limit(limit);
 
     if (error) throw error;
-    return (data || []) as Property[];
+    return await this.signImages(data || []) as Property[];
   }
 
   async getByCity(cityId: string, limit: number = 8): Promise<Property[]> {
@@ -131,7 +151,7 @@ class PropertiesService {
       .select(`
         *,
         city:cities!properties_city_id_fkey(id, name, slug),
-        images:property_images!property_images_property_id_fkey(url, alt_text, is_primary, sort_order)
+        images:property_images!property_images_property_id_fkey(url, storage_path, alt_text, is_primary, sort_order)
       `)
       .eq('is_published', true)
       .eq('status', 'active')
@@ -140,7 +160,7 @@ class PropertiesService {
       .limit(limit);
 
     if (error) throw error;
-    return (data || []) as Property[];
+    return await this.signImages(data || []) as Property[];
   }
 
   async incrementViews(propertyId: string): Promise<void> {
@@ -156,7 +176,7 @@ class PropertiesService {
       .select(`
         *,
         city:cities!properties_city_id_fkey(id, name, slug),
-        images:property_images!property_images_property_id_fkey(url, alt_text, is_primary, sort_order)
+        images:property_images!property_images_property_id_fkey(url, storage_path, alt_text, is_primary, sort_order)
       `, { count: 'exact' })
       .eq('owner_id', userId)
       .order('created_at', { ascending: false })
@@ -165,7 +185,7 @@ class PropertiesService {
     if (error) throw error;
 
     return {
-      data: (data || []) as Property[],
+      data: await this.signImages(data || []) as Property[],
       count: count || 0,
       page,
       per_page: perPage,

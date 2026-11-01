@@ -79,7 +79,7 @@ class AgenciesService {
   async getBySlug(slug: string): Promise<Agency | null> {
     const { data, error } = await supabase
       .from('agencies')
-      .select('*, city:cities(name, slug), owner:profiles(id, first_name, last_name, avatar_url, phone)')
+      .select('*, city:cities(name, slug), owner:public_profiles!agencies_owner_id_fkey(id, first_name, last_name, avatar_url)')
       .eq('slug', slug)
       .single();
 
@@ -92,7 +92,7 @@ class AgentsService {
   async getAll(limit?: number): Promise<Agent[]> {
     let query = supabase
       .from('agents')
-      .select('*, profile:profiles(id, first_name, last_name, avatar_url, phone), agency:agencies(id, name, slug)')
+      .select('*, profile:public_profiles!agents_profile_id_fkey(id, first_name, last_name, avatar_url), agency:agencies(id, name, slug)')
       .eq('is_active', true)
       .order('rating_avg', { ascending: false });
 
@@ -106,7 +106,7 @@ class AgentsService {
   async getBySlug(slug: string): Promise<Agent | null> {
     const { data, error } = await supabase
       .from('agents')
-      .select('*, profile:profiles(id, first_name, last_name, avatar_url, phone, bio), agency:agencies(id, name, slug, logo_url)')
+      .select('*, profile:public_profiles!agents_profile_id_fkey(id, first_name, last_name, avatar_url, bio), agency:agencies(id, name, slug, logo_url)')
       .eq('slug', slug)
       .single();
 

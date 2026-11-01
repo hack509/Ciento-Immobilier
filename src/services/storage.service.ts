@@ -1,10 +1,20 @@
 import { supabase } from './supabase';
+import type { PropertyImage } from '@/types';
 
 const BUCKET = 'property-images';
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
 class StorageService {
+  async getSignedUrl(storagePath: string): Promise<string> {
+    const { data, error } = await supabase.storage
+      .from(BUCKET)
+      .createSignedUrl(storagePath, 60 * 60);
+
+    if (error) throw error;
+    return data.signedUrl;
+  }
+
   async uploadPropertyImage(
     propertyId: string,
     file: File,
@@ -27,13 +37,13 @@ class StorageService {
 
     if (uploadError) throw uploadError;
 
-    const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(path);
+    const signedUrl = await this.getSignedUrl(path);
 
     const { data: imageData, error: insertError } = await supabase
       .from('property_images')
       .insert({
         property_id: propertyId,
-        url: urlData.publicUrl,
+        url: signedUrl,
         storage_path: path,
         alt_text: altText || file.name,
         is_primary: isPrimary,
@@ -73,7 +83,12 @@ class StorageService {
       .order('sort_order');
 
     if (error) throw error;
-    return data || [];
+    return Promise.all(
+      ((data || []) as PropertyImage[]).map(async (image) => ({
+        ...image,
+        url: await this.getSignedUrl(image.storage_path),
+      }))
+    );
   }
 }
 
