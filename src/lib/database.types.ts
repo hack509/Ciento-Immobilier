@@ -20,6 +20,10 @@ export interface Database {
         Args: { p_conversation_id: string };
         Returns: undefined;
       };
+      unsubscribe_newsletter: {
+        Args: { p_token: string };
+        Returns: boolean;
+      };
     };
   };
 }

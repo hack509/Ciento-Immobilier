@@ -150,7 +150,7 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-3 text-primary-300 text-sm">
                 <Mail className="w-4 h-4 shrink-0 text-secondary-400" />
-                <span>info@ciento-immobilier.com</span>
+                <span>contact@cientoimmobilier.com</span>
               </li>
             </ul>
           </div>

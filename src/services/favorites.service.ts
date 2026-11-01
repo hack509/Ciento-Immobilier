@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { storageService } from './storage.service';
 import type { Favorite } from '@/types';
 
 class FavoritesService {
@@ -12,13 +13,28 @@ class FavoritesService {
         property:properties(
           *,
           city:cities!properties_city_id_fkey(id, name, slug),
-          images:property_images!property_images_property_id_fkey(url, alt_text, is_primary, sort_order)
+          images:property_images!property_images_property_id_fkey(url, storage_path, alt_text, is_primary, sort_order)
         )
       `)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return (data || []) as Favorite[];
+    return Promise.all(
+      ((data || []) as Favorite[]).map(async (favorite) => ({
+        ...favorite,
+        property: favorite.property
+          ? {
+              ...favorite.property,
+              images: await Promise.all(
+                (favorite.property.images || []).map(async (image) => ({
+                  ...image,
+                  url: await storageService.getSignedUrl(image.storage_path),
+                }))
+              ),
+            }
+          : undefined,
+      }))
+    );
   }
 
   async check(propertyId: string): Promise<boolean> {

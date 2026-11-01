@@ -65,8 +65,8 @@ export function HeroSearch() {
   };
 
   return (
-    <div className="w-full max-w-3xl">
-      <div role="group" aria-label="Type de recherche" className="flex gap-1">
+    <div className="w-full max-w-4xl">
+      <div role="group" aria-label="Type de recherche" className="flex w-full gap-1 sm:w-fit">
         {TABS.map((tab) => {
           const selected = listingType === tab.value;
           return (
@@ -76,7 +76,7 @@ export function HeroSearch() {
               aria-pressed={selected}
               onClick={() => setListingType(tab.value)}
               className={cn(
-                'px-5 py-2.5 rounded-t-xl text-sm font-semibold transition-colors min-h-[44px]',
+                'flex-1 px-4 py-2.5 rounded-t-xl text-center text-sm font-semibold transition-colors min-h-[44px] sm:flex-none sm:px-5',
                 selected
                   ? 'bg-white text-primary-900'
                   : 'bg-primary-800/80 text-white hover:bg-primary-700 ring-1 ring-inset ring-white/15'
@@ -90,7 +90,7 @@ export function HeroSearch() {
 
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-2xl rounded-tl-none p-2.5 shadow-float flex flex-col md:flex-row gap-2"
+        className="grid grid-cols-1 gap-2 rounded-2xl rounded-tl-none bg-white p-2.5 shadow-float sm:grid-cols-2 md:flex md:items-stretch"
       >
         <SearchField icon={MapPin} label="Ville" value={cityId} onChange={setCityId}>
           <option value="">Toutes</option>
@@ -112,7 +112,7 @@ export function HeroSearch() {
         </SearchField>
         <button
           type="submit"
-          className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-secondary-500 text-primary-900 font-semibold text-sm hover:bg-secondary-400 active:bg-secondary-600 transition-colors shadow-sm min-h-[48px] shrink-0"
+          className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-secondary-500 px-6 py-3.5 text-sm font-semibold text-primary-900 shadow-sm transition-colors hover:bg-secondary-400 active:bg-secondary-600 sm:col-span-2 md:shrink-0"
         >
           <Search className="w-4 h-4" />
           Rechercher

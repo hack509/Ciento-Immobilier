@@ -66,7 +66,16 @@ npx supabase db push
 
 ### Storage Buckets
 
-Migration `010_create_storage_buckets.sql` creates the `property-images` bucket automatically during `npx supabase db push`.
+Migration `010_create_storage_buckets.sql` creates the `property-images`
+bucket. Migration `014_security_hardening.sql` makes it private; the frontend
+uses short-lived signed URLs and storage policies limit access to published
+properties and their owners. Deploy the updated frontend before applying
+migration 014.
+
+The newsletter Edge Functions use Resend. Set `RESEND_API_KEY` and
+`NEWSLETTER_FROM_EMAIL` as Supabase Function secrets, then deploy
+`newsletter-subscribe` and `newsletter-manage` with the Supabase CLI. Verify
+the sender domain with Resend before production.
 
 ---
 
