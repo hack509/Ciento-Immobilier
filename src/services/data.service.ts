@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import type { City, Neighborhood, Category, Agency, Agent, Profile } from '@/types';
+import type { City, Neighborhood, Category, Agency, Agent } from '@/types';
 
 class CitiesService {
   async getAll(): Promise<City[]> {
@@ -115,48 +115,7 @@ class AgentsService {
   }
 }
 
-class UsersService {
-  async getAll(page: number = 1, perPage: number = 20) {
-    const from = (page - 1) * perPage;
-    const to = from + perPage - 1;
-
-    const { data, error, count } = await supabase
-      .from('profiles')
-      .select('*', { count: 'exact' })
-      .range(from, to)
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-    return { data: data as Profile[], count: count || 0 };
-  }
-
-  async updateRole(userId: string, role: string) {
-    const { data, error } = await supabase
-      .from('profiles')
-      .update({ role, updated_at: new Date().toISOString() })
-      .eq('id', userId)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data as Profile;
-  }
-
-  async toggleActive(userId: string, isActive: boolean) {
-    const { data, error } = await supabase
-      .from('profiles')
-      .update({ is_active: isActive, updated_at: new Date().toISOString() })
-      .eq('id', userId)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data as Profile;
-  }
-}
-
 export const citiesService = new CitiesService();
 export const categoriesService = new CategoriesService();
 export const agenciesService = new AgenciesService();
 export const agentsService = new AgentsService();
-export const usersService = new UsersService();

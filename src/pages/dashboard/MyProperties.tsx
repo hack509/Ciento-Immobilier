@@ -9,7 +9,7 @@ import { Modal } from '@/components/ui/Modal';
 import { Pagination } from '@/components/ui/Pagination';
 import { useOwnProperties, useDeleteProperty } from '@/hooks/useProperties';
 import { useAuth } from '@/contexts/AuthContext';
-import { formatPrice, getStatusColor } from '@/lib/utils';
+import { formatPrice, getStatusColor, getStatusLabel } from '@/lib/utils';
 import { getListingTypeLabel, getPropertyTypeLabel } from '@/lib/utils';
 
 export function MyProperties() {
@@ -30,7 +30,7 @@ export function MyProperties() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Mes annonces</h1>
+          <h1 className="text-2xl font-bold text-primary-900 sm:text-3xl">Mes annonces</h1>
           <p className="text-gray-500 text-sm mt-1">
             {data ? `${data.count} annonce${data.count > 1 ? 's' : ''}` : 'Gérez vos annonces immobilières'}
           </p>
@@ -41,6 +41,13 @@ export function MyProperties() {
           </Button>
         </Link>
       </div>
+
+      {data?.data.some((p) => p.status === 'pending' || p.status === 'suspended') && (
+        <div className="mb-6 rounded-2xl border border-warning-100 bg-warning-50 p-4 text-sm text-warning-700" role="status">
+          Les nouvelles annonces sont vérifiées par notre équipe avant leur mise en ligne. Vous recevez une
+          notification dès qu’une annonce est approuvée ou refusée.
+        </div>
+      )}
 
       {isLoading ? (
         <LoadingSpinner size="lg" text="Chargement..." className="py-20" />
@@ -85,7 +92,7 @@ export function MyProperties() {
                       <td className="px-4 py-3 font-medium text-gray-900">{formatPrice(property.price)}</td>
                       <td className="px-4 py-3">
                         <Badge variant={getStatusColor(property.status)} size="sm">
-                          {property.status}
+                          {getStatusLabel(property.status)}
                         </Badge>
                       </td>
                       <td className="px-4 py-3 text-gray-600">{property.views_count}</td>
@@ -142,7 +149,7 @@ export function MyProperties() {
                     <div className="text-sm font-bold text-secondary-700 mt-1">{formatPrice(property.price)}</div>
                   </div>
                   <Badge variant={getStatusColor(property.status)} size="sm">
-                    {property.status}
+                    {getStatusLabel(property.status)}
                   </Badge>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">

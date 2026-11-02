@@ -14,7 +14,7 @@ export function Favorites() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Mes favoris</h1>
+      <h1 className="text-2xl font-bold text-primary-900 sm:text-3xl mb-2">Mes favoris</h1>
       <p className="text-gray-500 text-sm mb-6">Retrouvez tous les biens que vous avez sauvegardés</p>
 
       {isLoading ? (

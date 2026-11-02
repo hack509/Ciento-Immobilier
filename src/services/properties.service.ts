@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 import { storageService } from './storage.service';
-import type { Property, SearchFilters, PaginatedResponse, Amenity } from '@/types';
+import type { Property, PropertyStatus, SearchFilters, PaginatedResponse, Amenity } from '@/types';
 import { ITEMS_PER_PAGE } from '@/lib/constants';
 
 type PropertyWithStorageImages = {
@@ -191,6 +191,57 @@ class PropertiesService {
       per_page: perPage,
       total_pages: Math.ceil((count || 0) / perPage),
     };
+  }
+
+  /** Admin moderation queue: every listing (RLS grants admins full read), newest first. */
+  async getForModeration(
+    filters: { status?: PropertyStatus | ''; query?: string; page?: number; perPage?: number } = {}
+  ): Promise<PaginatedResponse<Property>> {
+    const page = filters.page || 1;
+    const perPage = filters.perPage || 20;
+    const from = (page - 1) * perPage;
+
+    let query = supabase
+      .from('properties')
+      .select(`
+        *,
+        city:cities!properties_city_id_fkey(id, name, slug),
+        owner:profiles!properties_owner_id_fkey(id, first_name, last_name, email, phone),
+        images:property_images!property_images_property_id_fkey(url, storage_path, alt_text, is_primary, sort_order)
+      `, { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .range(from, from + perPage - 1);
+
+    if (filters.status) query = query.eq('status', filters.status);
+    if (filters.query) query = query.ilike('title', `%${filters.query}%`);
+
+    const { data, error, count } = await query;
+    if (error) throw error;
+
+    return {
+      data: await this.signImages(data || []) as Property[],
+      count: count || 0,
+      page,
+      per_page: perPage,
+      total_pages: Math.ceil((count || 0) / perPage),
+    };
+  }
+
+  /** Admin decision on a listing; moderation fields are protected by a DB trigger for non-admins. */
+  async moderate(id: string, decision: 'approve' | 'reject' | 'review'): Promise<void> {
+    const changes = {
+      approve: { status: 'active', is_published: true, published_at: new Date().toISOString() },
+      reject: { status: 'suspended', is_published: false },
+      review: { status: 'pending', is_published: false },
+    }[decision];
+
+    const { error } = await supabase.from('properties').update(changes).eq('id', id);
+    if (error) throw error;
+  }
+
+  async setFeatured(id: string, isFeatured: boolean): Promise<void> {
+    const { error } = await supabase.from('properties').update({ is_featured: isFeatured }).eq('id', id);
+    if (error) throw error;
   }
 
   async create(propertyData: Partial<Property>): Promise<Property> {

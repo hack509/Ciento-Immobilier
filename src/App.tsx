@@ -29,6 +29,10 @@ const Notifications = lazy(() => import('@/pages/dashboard/Notifications').then(
 const Profile = lazy(() => import('@/pages/dashboard/Profile').then(m => ({ default: m.Profile })));
 const Settings = lazy(() => import('@/pages/dashboard/Settings').then(m => ({ default: m.Settings })));
 const PropertyForm = lazy(() => import('@/pages/dashboard/PropertyForm').then(m => ({ default: m.PropertyForm })));
+const AdminOverview = lazy(() => import('@/pages/admin/AdminOverview').then(m => ({ default: m.AdminOverview })));
+const AdminProperties = lazy(() => import('@/pages/admin/AdminProperties').then(m => ({ default: m.AdminProperties })));
+const AdminUsers = lazy(() => import('@/pages/admin/AdminUsers').then(m => ({ default: m.AdminUsers })));
+const AdminReports = lazy(() => import('@/pages/admin/AdminReports').then(m => ({ default: m.AdminReports })));
 
 function LoadingScreen() {
   return (
@@ -79,6 +83,14 @@ export default function App() {
             <Route path="/dashboard/notifications" element={<Notifications />} />
             <Route path="/dashboard/profil" element={<Profile />} />
             <Route path="/dashboard/settings" element={<Settings />} />
+
+            {/* Admin Routes — role-gated in the UI, enforced by RLS in the database */}
+            <Route element={<ProtectedRoute allowedRoles={['admin', 'super_admin']} />}>
+              <Route path="/admin" element={<AdminOverview />} />
+              <Route path="/admin/annonces" element={<AdminProperties />} />
+              <Route path="/admin/utilisateurs" element={<AdminUsers />} />
+              <Route path="/admin/signalements" element={<AdminReports />} />
+            </Route>
           </Route>
         </Route>
 
