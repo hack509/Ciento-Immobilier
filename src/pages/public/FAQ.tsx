@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { HelpCircle, ChevronDown, Search, Mail, Phone, MapPin } from 'lucide-react';
+import { CONTACT_EMAIL, CONTACT_PHONES } from '@/lib/constants';
 
 const faqSections = [
   {
@@ -228,19 +229,22 @@ export function FAQ() {
               </p>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                 <a
-                  href="mailto:info@ciento-immobilier.com"
+                  href={`mailto:${CONTACT_EMAIL}`}
                   className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-secondary-500 hover:bg-secondary-400 text-primary-900 font-semibold rounded-lg transition-colors text-sm"
                 >
                   <Mail className="w-4 h-4" />
                   Nous écrire
                 </a>
-                <a
-                  href="tel:+50928131234"
-                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg transition-colors text-sm"
-                >
-                  <Phone className="w-4 h-4" />
-                  +509 2813-1234
-                </a>
+                {CONTACT_PHONES.map((phone) => (
+                  <a
+                    key={phone.number}
+                    href={`tel:${phone.number}`}
+                    className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg transition-colors text-sm"
+                  >
+                    <Phone className="w-4 h-4" />
+                    {phone.label}
+                  </a>
+                ))}
               </div>
               <div className="flex items-center justify-center gap-2 mt-4 text-primary-300 text-sm">
                 <MapPin className="w-4 h-4" />
