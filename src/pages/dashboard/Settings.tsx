@@ -1,99 +1,123 @@
-import { Globe, Shield, Bell } from 'lucide-react';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Lock, Mail, ShieldCheck, LifeBuoy } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { PageHeader, Panel } from '@/components/dashboard/DashboardUI';
 import { useAuth } from '@/contexts/AuthContext';
+import { authService } from '@/services/auth.service';
+import { getRoleLabel } from '@/lib/utils';
+
+const MIN_PASSWORD_LENGTH = 8;
+
+function PasswordForm() {
+  const [password, setPassword] = useState('');
+  const [confirmation, setConfirmation] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  const mismatch = confirmation.length > 0 && password !== confirmation;
+  const tooShort = password.length > 0 && password.length < MIN_PASSWORD_LENGTH;
+  const canSubmit = password.length >= MIN_PASSWORD_LENGTH && password === confirmation && !isSaving;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!canSubmit) return;
+    setIsSaving(true);
+    setStatus(null);
+    try {
+      await authService.updatePassword(password);
+      setPassword('');
+      setConfirmation('');
+      setStatus({ type: 'success', message: 'Votre mot de passe a été modifié.' });
+    } catch (err: unknown) {
+      setStatus({ type: 'error', message: err instanceof Error ? err.message : 'Impossible de modifier le mot de passe.' });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4 p-5">
+      {status && (
+        <p
+          role={status.type === 'error' ? 'alert' : 'status'}
+          className={status.type === 'success'
+            ? 'rounded-xl bg-success-50 p-3 text-sm text-success-700'
+            : 'rounded-xl bg-danger-50 p-3 text-sm text-danger-600'}
+        >
+          {status.message}
+        </p>
+      )}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <Input
+          id="new-password"
+          label="Nouveau mot de passe"
+          type="password"
+          autoComplete="new-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          icon={<Lock className="h-4 w-4" />}
+          error={tooShort ? `${MIN_PASSWORD_LENGTH} caractères minimum` : undefined}
+        />
+        <Input
+          id="confirm-password"
+          label="Confirmer le mot de passe"
+          type="password"
+          autoComplete="new-password"
+          value={confirmation}
+          onChange={(e) => setConfirmation(e.target.value)}
+          icon={<Lock className="h-4 w-4" />}
+          error={mismatch ? 'Les mots de passe ne correspondent pas' : undefined}
+        />
+      </div>
+      <div className="flex justify-end">
+        <Button type="submit" disabled={!canSubmit} isLoading={isSaving}>
+          Mettre à jour le mot de passe
+        </Button>
+      </div>
+    </form>
+  );
+}
 
 export function Settings() {
   const { profile } = useAuth();
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Paramètres</h1>
-      <p className="text-gray-500 text-sm mb-6">Configurez vos préférences</p>
+      <PageHeader title="Paramètres" subtitle="Sécurité et informations de votre compte." />
 
       <div className="space-y-6">
-        {/* Language */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-secondary-50 rounded-lg flex items-center justify-center">
-              <Globe className="w-5 h-5 text-secondary-700" />
-            </div>
-            <div>
-              <h2 className="font-semibold text-gray-900">Langue</h2>
-              <p className="text-sm text-gray-500">Choisissez votre langue préférée</p>
-            </div>
-          </div>
-          <div className="flex gap-3">
-            <button className="px-4 py-2 rounded-lg bg-secondary-500 text-primary-900 text-sm font-medium">
-              Français
-            </button>
-            <button className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 text-sm font-medium hover:bg-gray-50">
-              English
-            </button>
-          </div>
-        </div>
-
-        {/* Security */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-warning-50 rounded-lg flex items-center justify-center">
-              <Shield className="w-5 h-5 text-warning-500" />
-            </div>
-            <div>
-              <h2 className="font-semibold text-gray-900">Sécurité</h2>
-              <p className="text-sm text-gray-500">Gérez votre mot de passe et la sécurité de votre compte</p>
-            </div>
-          </div>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between py-2">
-              <span className="text-sm text-gray-600">Email</span>
-              <span className="text-sm text-gray-900">{profile?.email}</span>
-            </div>
-            <div className="flex items-center justify-between py-2">
-              <span className="text-sm text-gray-600">Mot de passe</span>
-              <button className="text-sm text-secondary-700 hover:text-secondary-700 font-medium">
-                Changer le mot de passe
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Notifications */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-success-50 rounded-lg flex items-center justify-center">
-              <Bell className="w-5 h-5 text-success-600" />
-            </div>
-            <div>
-              <h2 className="font-semibold text-gray-900">Notifications</h2>
-              <p className="text-sm text-gray-500">Configurez vos préférences de notification</p>
-            </div>
-          </div>
-          <div className="space-y-3">
+        <Panel title="Compte">
+          <dl className="divide-y divide-gray-100">
             {[
-              { label: 'Nouveaux messages', defaultChecked: true },
-              { label: 'Rendez-vous', defaultChecked: true },
-              { label: 'Mises à jour des annonces', defaultChecked: false },
-              { label: 'Newsletter', defaultChecked: false },
-            ].map((item) => (
-              <label key={item.label} className="flex items-center justify-between py-2">
-                <span className="text-sm text-gray-600">{item.label}</span>
-                <input
-                  type="checkbox"
-                  defaultChecked={item.defaultChecked}
-                  className="rounded border-gray-300 text-secondary-700 focus:ring-secondary-500"
-                />
-              </label>
+              { icon: Mail, label: 'Adresse email', value: profile?.email },
+              { icon: ShieldCheck, label: 'Type de compte', value: profile ? getRoleLabel(profile.role) : '' },
+            ].map(({ icon: Icon, label, value }) => (
+              <div key={label} className="flex items-center gap-3 px-5 py-4">
+                <Icon className="h-4.5 w-4.5 text-primary-400" />
+                <dt className="flex-1 text-sm text-gray-600">{label}</dt>
+                <dd className="text-sm font-semibold text-primary-900">{value}</dd>
+              </div>
             ))}
-          </div>
-        </div>
+          </dl>
+        </Panel>
 
-        {/* Danger Zone */}
-        <div className="bg-white rounded-xl border border-danger-200 p-6">
-          <h2 className="font-semibold text-danger-600 mb-2">Zone dangereuse</h2>
-          <p className="text-sm text-gray-500 mb-4">Ces actions sont irréversibles.</p>
-          <button className="px-4 py-2 rounded-lg border border-danger-300 text-danger-600 text-sm font-medium hover:bg-danger-50 transition-colors">
-            Supprimer mon compte
-          </button>
-        </div>
+        <Panel title="Mot de passe">
+          <PasswordForm />
+        </Panel>
+
+        <Panel title="Supprimer mon compte">
+          <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-gray-600">
+              La suppression efface vos annonces, messages et favoris de façon définitive.
+              Notre équipe la traite sur demande pour vérifier votre identité.
+            </p>
+            <Link to="/contact" className="shrink-0">
+              <Button variant="outline" icon={<LifeBuoy className="h-4 w-4" />}>Contacter le support</Button>
+            </Link>
+          </div>
+        </Panel>
       </div>
     </div>
   );

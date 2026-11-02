@@ -11,14 +11,14 @@ class ConversationsService {
         updated_at,
         property_id,
         participants:conversation_participants(
-          user:profiles(id, first_name, last_name, avatar_url)
+          user:public_profiles!conversation_participants_user_id_fkey(id, first_name, last_name, avatar_url)
         ),
         last_message:messages(
           id,
           content,
           status,
           created_at,
-          sender:profiles(id, first_name, last_name)
+          sender:public_profiles!messages_sender_id_fkey(id, first_name, last_name)
         )
       `)
       .order('updated_at', { ascending: false })
@@ -49,7 +49,7 @@ class ConversationsService {
         updated_at,
         property_id,
         participants:conversation_participants(
-          user:profiles(id, first_name, last_name, avatar_url)
+          user:public_profiles!conversation_participants_user_id_fkey(id, first_name, last_name, avatar_url)
         )
       `)
       .eq('id', conversationId)
@@ -73,7 +73,7 @@ class ConversationsService {
       .from('messages')
       .select(`
         *,
-        sender:profiles(id, first_name, last_name, avatar_url)
+        sender:public_profiles!messages_sender_id_fkey(id, first_name, last_name, avatar_url)
       `)
       .eq('conversation_id', conversationId)
       .order('created_at', { ascending: true });
@@ -102,7 +102,7 @@ class ConversationsService {
       })
       .select(`
         *,
-        sender:profiles(id, first_name, last_name, avatar_url)
+        sender:public_profiles!messages_sender_id_fkey(id, first_name, last_name, avatar_url)
       `)
       .single();
 

@@ -46,7 +46,6 @@ const propertySchema = z.object({
   floors: z.coerce.number().min(1).default(1),
   year_built: z.coerce.number().optional(),
   address: z.string().optional(),
-  is_published: z.boolean().default(false),
 });
 
 type PropertyFormData = z.infer<typeof propertySchema>;
@@ -101,11 +100,9 @@ export function PropertyForm() {
       half_baths: 0,
       total_rooms: 0,
       floors: 1,
-      is_published: false,
     },
   });
 
-  const isPublished = watch('is_published');
   const isNegotiable = watch('price_negotiable');
 
   useEffect(() => {
@@ -130,7 +127,6 @@ export function PropertyForm() {
         floors: existingProperty.floors,
         year_built: existingProperty.year_built,
         address: existingProperty.address || '',
-        is_published: existingProperty.is_published,
       });
       setSelectedAmenities(
         existingProperty.amenities?.map((a: Amenity) => a.id) || []
@@ -423,15 +419,12 @@ export function PropertyForm() {
           </section>
         )}
 
-        {/* Publish */}
+        {/* Publication */}
         <section className="bg-white rounded-xl border border-gray-200 p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Publication</h2>
-          <Switch
-            checked={isPublished}
-            onChange={(val) => setValue('is_published', val)}
-            label="Publier l'annonce"
-            description={isPublished ? 'Votre annonce est visible par tous' : 'L\'annonce reste en brouillon'}
-          />
+          <p className="text-sm text-gray-600">
+            Après l'enregistrement, votre annonce sera soumise à validation avant sa publication.
+          </p>
         </section>
 
         {/* Actions */}

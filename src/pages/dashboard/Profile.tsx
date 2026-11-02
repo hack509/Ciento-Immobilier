@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/Input';
 import { TextArea } from '@/components/ui/TextArea';
 import { useAuth } from '@/contexts/AuthContext';
 import { authService } from '@/services/auth.service';
+import { getRoleLabel } from '@/lib/utils';
+import { PageHeader } from '@/components/dashboard/DashboardUI';
 
 export function Profile() {
   const { profile, refreshProfile } = useAuth();
@@ -49,10 +51,9 @@ export function Profile() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Mon profil</h1>
-      <p className="text-gray-500 text-sm mb-6">Gérez vos informations personnelles</p>
+      <PageHeader title="Mon profil" subtitle="Ces informations aident les acheteurs et propriétaires à vous identifier." />
 
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-6">
         {success && (
           <div className="mb-4 p-3 bg-success-50 text-success-600 text-sm rounded-lg">{success}</div>
         )}
@@ -62,13 +63,13 @@ export function Profile() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100">
-            <div className="w-20 h-20 bg-secondary-100 rounded-full flex items-center justify-center text-secondary-700 font-bold text-2xl">
+            <div className="w-20 h-20 bg-primary-800 rounded-full flex items-center justify-center text-white font-bold text-2xl">
               {profile?.first_name?.[0]}{profile?.last_name?.[0]}
             </div>
             <div>
               <div className="font-semibold text-gray-900">{profile?.first_name} {profile?.last_name}</div>
               <div className="text-sm text-gray-500">{profile?.email}</div>
-              <div className="text-xs text-gray-400 mt-1 capitalize">Rôle : {profile?.role}</div>
+              <span className="mt-2 inline-block rounded-full bg-primary-50 px-2.5 py-0.5 text-xs font-semibold text-primary-700">{profile ? getRoleLabel(profile.role) : ''}</span>
             </div>
           </div>
 

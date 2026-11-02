@@ -38,7 +38,8 @@ supabase/
 └── migrations/        # Database migrations
     ├── 001-007        # Core schema (extensions, enums, tables, indexes, RLS, functions, seed)
     ├── 008-009        # Newsletter feature
-    └── 010            # Storage buckets
+    ├── 010-013        # Storage, profile creation, security fixes, messaging RPCs
+    └── 014            # Security hardening for deployed projects
 ```
 
 ## TypeScript Configuration
@@ -79,6 +80,8 @@ npm run dev
 
 ## Supabase Setup
 
+For a new project, apply the migrations in order:
+
 ```bash
 # Link to your Supabase project
 npx supabase login
@@ -90,6 +93,29 @@ npx supabase db push
 # Verify
 npx supabase db dump --file schema.sql
 ```
+
+The project reference in `supabase/config.toml` should match the project URL
+in `.env`. Before applying migrations, verify which migrations have already
+been run on that exact project. If migrations `001`-`013` were already applied
+there, do not run them again; apply only
+[`014_security_hardening.sql`](supabase/migrations/014_security_hardening.sql).
+If this is a different/new project, apply all migrations in order instead.
+Deploy the updated frontend before making the property image bucket private,
+so it can request signed image URLs.
+
+The unsubscribe token issuer is restricted to `service_role`; a trusted
+server-side email workflow issues and delivers confirmation/unsubscribe
+tokens. The Edge Functions use Resend; configure `RESEND_API_KEY` and
+`NEWSLETTER_FROM_EMAIL` as Supabase Function secrets, never in the browser:
+
+```bash
+npx supabase secrets set RESEND_API_KEY=<your-resend-api-key> NEWSLETTER_FROM_EMAIL="Ciento-Immobilier <newsletter@your-domain>"
+npx supabase functions deploy newsletter-subscribe
+npx supabase functions deploy newsletter-manage
+```
+
+The sender domain must be verified with Resend. The API rate-limits newsletter
+requests to three per email per day and ten per client IP per hour.
 
 ## Environment Variables
 

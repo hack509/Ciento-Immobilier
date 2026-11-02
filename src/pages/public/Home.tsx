@@ -66,7 +66,7 @@ export function Home() {
       />
 
       {/* Hero */}
-      <section className="relative bg-primary-900 overflow-hidden">
+      <section className="relative isolate overflow-hidden bg-primary-900">
         <picture>
           <source media="(max-width: 767px)" srcSet="/hero-sm.webp" type="image/webp" />
           <img
@@ -74,37 +74,37 @@ export function Home() {
             alt=""
             aria-hidden="true"
             fetchPriority="high"
-            className="absolute inset-0 h-full w-full object-cover object-[70%_center]"
+            className="absolute inset-0 h-full w-full object-cover object-[62%_center] sm:object-[70%_center]"
           />
         </picture>
         {/* Full-bleed background: navy from the left keeps the text readable, the house stays visible on the right */}
-        <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-r from-primary-900/95 via-primary-900/75 to-primary-900/10" />
+        <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-r from-primary-900/95 via-primary-900/75 to-primary-900/10 max-md:via-primary-900/85 max-md:to-primary-900/45" />
         <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-primary-900/70 via-transparent to-primary-900/30" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-16 sm:pt-20 sm:pb-24 lg:py-28">
+        <div className="relative mx-auto max-w-7xl px-4 pb-12 pt-10 sm:px-6 sm:pb-24 sm:pt-20 lg:px-8 lg:py-28">
           <div className="max-w-2xl animate-fade-up">
-            <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-secondary-300 ring-1 ring-inset ring-white/15 mb-6">
+            <p className="mb-5 inline-flex max-w-full items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold text-secondary-300 ring-1 ring-inset ring-white/15 sm:mb-6 sm:text-xs">
               <span className="h-1.5 w-1.5 rounded-full bg-secondary-400" />
               Immobilier aux Gonaïves et partout en Haïti
             </p>
-            <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-extrabold text-white leading-[1.05]">
+            <h1 className="text-[clamp(2rem,8vw,2.75rem)] font-extrabold leading-[1.05] text-white sm:text-5xl lg:text-[3.5rem]">
               Trouvez le bien <span className="text-secondary-400">qui vous ressemble</span>
             </h1>
-            <p className="mt-5 text-base sm:text-lg text-primary-200 leading-relaxed max-w-lg">
+            <p className="mt-4 max-w-lg text-sm leading-relaxed text-primary-200 sm:mt-5 sm:text-lg">
               Maisons, appartements, terrains et locaux commerciaux, présentés
               par des propriétaires et des agents de confiance.
             </p>
           </div>
 
-          <div className="mt-10 animate-fade-up [animation-delay:120ms]">
+          <div className="mt-7 animate-fade-up [animation-delay:120ms] sm:mt-10">
             <HeroSearch />
           </div>
 
-          <ul className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl">
+          <ul className="mt-7 grid max-w-4xl grid-cols-1 gap-3 sm:mt-10 sm:grid-cols-3 sm:gap-4">
             {TRUST_POINTS.map(({ icon: Icon, title, desc }) => (
-              <li key={title} className="flex items-center gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-inset ring-white/15">
-                  <Icon className="h-5 w-5 text-secondary-400" />
+              <li key={title} className="flex items-center gap-3 rounded-xl bg-primary-900/35 p-2.5 ring-1 ring-inset ring-white/10 sm:rounded-none sm:bg-transparent sm:p-0 sm:ring-0">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-inset ring-white/15 sm:h-10 sm:w-10">
+                  <Icon className="h-4 w-4 text-secondary-400 sm:h-5 sm:w-5" />
                 </span>
                 <span>
                   <span className="block text-sm font-semibold text-white">{title}</span>
@@ -146,7 +146,7 @@ export function Home() {
       </section>
 
       {/* Featured */}
-      <section className="py-16 lg:py-24 bg-gray-50">
+      <section className="bg-gray-50 py-12 sm:py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading
             eyebrow="Sélection"
@@ -161,7 +161,7 @@ export function Home() {
               </Link>
             }
           />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
             {isLoadingFeatured ? (
               Array.from({ length: 3 }).map((_, i) => <PropertyCardSkeleton key={i} />)
             ) : featuredProperties && featuredProperties.length > 0 ? (
@@ -180,7 +180,7 @@ export function Home() {
       </section>
 
       {/* How it works */}
-      <section className="py-16 lg:py-24 bg-white">
+      <section className="bg-white py-12 sm:py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading eyebrow="Simple et sûr" title="Comment ça marche" />
           <ol className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -201,15 +201,15 @@ export function Home() {
       </section>
 
       {/* Owners & agents */}
-      <section className="pb-16 lg:pb-24 bg-white">
+      <section className="bg-white pb-12 sm:pb-16 lg:pb-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative overflow-hidden rounded-3xl bg-primary-900 px-6 py-12 sm:px-12 lg:px-16 lg:py-16">
+          <div className="relative overflow-hidden rounded-2xl bg-primary-900 px-5 py-8 sm:rounded-3xl sm:px-12 sm:py-12 lg:px-16 lg:py-16">
             <div aria-hidden="true" className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-secondary-500/10" />
             <div aria-hidden="true" className="absolute -right-10 bottom-0 h-40 w-40 rounded-full bg-secondary-500/10" />
             <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
               <div>
                 <p className="eyebrow !text-secondary-400 mb-3">Propriétaires & agents</p>
-                <h2 className="text-3xl lg:text-4xl font-bold text-white">
+                <h2 className="text-2xl font-bold text-white sm:text-3xl lg:text-4xl">
                   Vendez ou louez votre bien plus rapidement
                 </h2>
                 <p className="mt-4 text-primary-200 leading-relaxed max-w-lg">

@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, MapPin, Home as HomeIcon, Wallet, ChevronDown } from 'lucide-react';
+import { Search, MapPin, Home as HomeIcon, Wallet, ChevronDown, SlidersHorizontal } from 'lucide-react';
 import { useCities } from '@/hooks/useCities';
 import { PROPERTY_TYPES, PRICE_RANGES } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import type { ListingType } from '@/types';
+import { Modal } from '@/components/ui/Modal';
 
 const TABS: { value: ListingType | ''; label: string }[] = [
   { value: 'sale', label: 'Acheter' },
@@ -49,6 +50,7 @@ export function HeroSearch() {
   const [cityId, setCityId] = useState('');
   const [propertyType, setPropertyType] = useState('');
   const [budget, setBudget] = useState('');
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,8 +67,8 @@ export function HeroSearch() {
   };
 
   return (
-    <div className="w-full max-w-3xl">
-      <div role="group" aria-label="Type de recherche" className="flex gap-1">
+    <div className="w-full max-w-4xl">
+      <div role="group" aria-label="Type de recherche" className="flex w-full gap-1 sm:w-fit">
         {TABS.map((tab) => {
           const selected = listingType === tab.value;
           return (
@@ -76,7 +78,7 @@ export function HeroSearch() {
               aria-pressed={selected}
               onClick={() => setListingType(tab.value)}
               className={cn(
-                'px-5 py-2.5 rounded-t-xl text-sm font-semibold transition-colors min-h-[44px]',
+                'flex-1 px-4 py-2.5 rounded-t-xl text-center text-sm font-semibold transition-colors min-h-[44px] sm:flex-none sm:px-5',
                 selected
                   ? 'bg-white text-primary-900'
                   : 'bg-primary-800/80 text-white hover:bg-primary-700 ring-1 ring-inset ring-white/15'
@@ -90,7 +92,7 @@ export function HeroSearch() {
 
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-2xl rounded-tl-none p-2.5 shadow-float flex flex-col md:flex-row gap-2"
+        className="hidden gap-2 rounded-2xl rounded-tl-none bg-white p-2.5 shadow-float md:flex md:items-stretch"
       >
         <SearchField icon={MapPin} label="Ville" value={cityId} onChange={setCityId}>
           <option value="">Toutes</option>
@@ -112,12 +114,76 @@ export function HeroSearch() {
         </SearchField>
         <button
           type="submit"
-          className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-secondary-500 text-primary-900 font-semibold text-sm hover:bg-secondary-400 active:bg-secondary-600 transition-colors shadow-sm min-h-[48px] shrink-0"
+          className="inline-flex min-h-[48px] shrink-0 items-center justify-center gap-2 rounded-xl bg-secondary-500 px-6 py-3.5 text-sm font-semibold text-primary-900 shadow-sm transition-colors hover:bg-secondary-400 active:bg-secondary-600"
         >
           <Search className="w-4 h-4" />
           Rechercher
         </button>
       </form>
+
+      <form
+        onSubmit={handleSubmit}
+        className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2 rounded-2xl rounded-tl-none bg-white p-2 shadow-float md:hidden"
+      >
+        <SearchField icon={MapPin} label="Ville" value={cityId} onChange={setCityId}>
+          <option value="">Toutes les villes</option>
+          {(cities || []).map((c) => (
+            <option key={c.id} value={c.id}>{c.name}</option>
+          ))}
+        </SearchField>
+        <button
+          type="button"
+          onClick={() => setFiltersOpen(true)}
+          aria-label={`Ouvrir les filtres${Number(Boolean(propertyType)) + Number(Boolean(budget)) ? `, ${Number(Boolean(propertyType)) + Number(Boolean(budget))} sélectionné(s)` : ''}`}
+          className="inline-flex min-h-[52px] items-center justify-center gap-1.5 rounded-xl border border-primary-200 px-3 text-sm font-semibold text-primary-900 transition-colors hover:bg-primary-50"
+        >
+          <SlidersHorizontal className="h-4 w-4" />
+          Filtres
+          {Number(Boolean(propertyType)) + Number(Boolean(budget)) > 0 && (
+            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-secondary-500 px-1 text-xs">
+              {Number(Boolean(propertyType)) + Number(Boolean(budget))}
+            </span>
+          )}
+        </button>
+        <button
+          type="submit"
+          aria-label="Rechercher des annonces"
+          className="inline-flex min-h-[52px] min-w-[48px] items-center justify-center rounded-xl bg-secondary-500 text-primary-900 shadow-sm transition-colors hover:bg-secondary-400 active:bg-secondary-600"
+        >
+          <Search className="h-5 w-5" />
+        </button>
+      </form>
+
+      <div className="md:hidden">
+        <Modal
+          isOpen={filtersOpen}
+          onClose={() => setFiltersOpen(false)}
+          title="Filtres de recherche"
+          className="!fixed !inset-x-0 !bottom-0 !top-auto !mx-0 !w-full !max-w-none !max-h-[85dvh] !rounded-b-none !rounded-t-3xl"
+        >
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <SearchField icon={HomeIcon} label="Type de bien" value={propertyType} onChange={setPropertyType}>
+              <option value="">Tous les types</option>
+              {PROPERTY_TYPES.map((t) => (
+                <option key={t.value} value={t.value}>{t.label}</option>
+              ))}
+            </SearchField>
+            <SearchField icon={Wallet} label="Budget" value={budget} onChange={setBudget}>
+              <option value="">Tous budgets</option>
+              {PRICE_RANGES.map((r, i) => (
+                <option key={r.label} value={i}>{r.label}</option>
+              ))}
+            </SearchField>
+            <button
+              type="submit"
+              className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl bg-secondary-500 px-6 py-3 text-sm font-semibold text-primary-900 shadow-sm transition-colors hover:bg-secondary-400 active:bg-secondary-600"
+            >
+              <Search className="h-4 w-4" />
+              Rechercher
+            </button>
+          </form>
+        </Modal>
+      </div>
     </div>
   );
 }

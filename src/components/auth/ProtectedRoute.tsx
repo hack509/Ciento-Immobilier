@@ -29,7 +29,8 @@ export function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
     return <Navigate to="/auth/connexion" replace state={{ from: location.pathname + location.search }} />;
   }
 
-  if (allowedRoles && profile && !allowedRoles.includes(profile.role)) {
+  // A role-restricted route never renders without a loaded profile (RLS still enforces access server-side)
+  if (allowedRoles && (!profile || !allowedRoles.includes(profile.role))) {
     return <Navigate to="/dashboard" replace />;
   }
 

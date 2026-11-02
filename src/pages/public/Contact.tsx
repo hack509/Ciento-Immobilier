@@ -3,6 +3,7 @@ import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Head } from '@/components/seo/Head';
+import { CONTACT_EMAIL, CONTACT_PHONES } from '@/lib/constants';
 
 export function Contact() {
   const [formData, setFormData] = useState({
@@ -103,8 +104,8 @@ export function Contact() {
             <div className="space-y-6">
               {[
                 { icon: MapPin, label: 'Adresse', value: 'Les Gonaïves, Artibonite, Haïti' },
-                { icon: Phone, label: 'Téléphone', value: '+509 2813-1234' },
-                { icon: Mail, label: 'Email', value: 'info@ciento-immobilier.com' },
+                { icon: Phone, label: 'Téléphone', value: CONTACT_PHONES.map((phone) => phone.label).join(' / ') },
+                { icon: Mail, label: 'Email', value: CONTACT_EMAIL },
                 { icon: Clock, label: 'Horaires', value: 'Lun-Sam: 8h - 18h' },
               ].map((item) => {
                 const Icon = item.icon;

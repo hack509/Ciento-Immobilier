@@ -3,6 +3,12 @@ import { getEnv } from './env';
 export const APP_NAME = 'Ciento-Immobilier';
 export const APP_DESCRIPTION = 'La première plateforme immobilière des Gonaïves, Haïti';
 export const APP_URL = getEnv().appUrl;
+export const CONTACT_EMAIL = 'contact@cientoimmobilier.com';
+export const CONTACT_PHONES = [
+  { label: '+509 3235-3622', number: '+50932353622' },
+  { label: '+509 5691-7878', number: '+50956917878' },
+  { label: '+509 3414-7245', number: '+50934147245' },
+] as const;
 
 export const CURRENCY = 'HTG';
 export const CURRENCY_SYMBOL = 'HTG';

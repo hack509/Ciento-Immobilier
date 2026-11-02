@@ -1,4 +1,5 @@
-import { Bell, Check, CheckCheck } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Bell, Check, CheckCheck, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
@@ -24,7 +25,7 @@ export function Notifications() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Notifications</h1>
+          <h1 className="text-2xl font-bold text-primary-900 sm:text-3xl">Notifications</h1>
           <p className="text-gray-500 text-sm mt-1">
             {unreadCount > 0 ? `${unreadCount} non lue${unreadCount > 1 ? 's' : ''}` : 'Tout est lu'}
           </p>
@@ -42,7 +43,7 @@ export function Notifications() {
       </div>
 
       {notifications && notifications.length > 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-card overflow-hidden">
           {notifications.map((notif) => (
             <div
               key={notif.id}
@@ -56,15 +57,25 @@ export function Notifications() {
                 notif.is_read ? 'bg-gray-300' : 'bg-secondary-500'
               )} />
               <div className="flex-1 min-w-0">
-                <div className="font-medium text-gray-900 text-sm">{notif.title}</div>
+                <div className="font-semibold text-primary-900 text-sm">{notif.title}</div>
                 <p className="text-sm text-gray-500 mt-0.5">{notif.message}</p>
                 <span className="text-xs text-gray-400 mt-1 block">{formatRelativeTime(notif.created_at)}</span>
+                {notif.link?.startsWith('/') && (
+                  <Link
+                    to={notif.link}
+                    onClick={() => !notif.is_read && markRead.mutate(notif.id)}
+                    className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-primary-700 hover:text-primary-900"
+                  >
+                    Voir <ChevronRight className="h-4 w-4" />
+                  </Link>
+                )}
               </div>
               {!notif.is_read && (
                 <button
                   onClick={() => markRead.mutate(notif.id)}
                   className="p-1.5 rounded-lg text-gray-400 hover:text-secondary-700 hover:bg-secondary-50 transition-colors shrink-0"
                   title="Marquer comme lu"
+                  aria-label="Marquer comme lu"
                 >
                   <Check className="w-4 h-4" />
                 </button>

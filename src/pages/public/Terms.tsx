@@ -1,4 +1,5 @@
 import { FileText, Mail, Phone, MapPin } from 'lucide-react';
+import { CONTACT_EMAIL, CONTACT_PHONES } from '@/lib/constants';
 
 export function Terms() {
   return (
@@ -164,11 +165,11 @@ export function Terms() {
               </div>
               <div className="flex items-center gap-3 text-gray-600 text-sm">
                 <Mail className="w-4 h-4 text-secondary-500 shrink-0" />
-                <span>legal@ciento-immobilier.com</span>
+                <span>{CONTACT_EMAIL}</span>
               </div>
               <div className="flex items-center gap-3 text-gray-600 text-sm">
                 <Phone className="w-4 h-4 text-secondary-500 shrink-0" />
-                <span>+509 2813-1234</span>
+                <span>{CONTACT_PHONES.map((phone) => phone.label).join(' / ')}</span>
               </div>
             </div>
           </section>

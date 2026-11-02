@@ -2,28 +2,31 @@ import { supabase } from './supabase';
 
 export class NewsletterService {
   async subscribe(email: string): Promise<{ success: boolean; message: string }> {
-    const { error } = await supabase
-      .from('newsletter_subscribers')
-      .insert({ email: email.toLowerCase().trim() });
+    const { error } = await supabase.functions.invoke('newsletter-subscribe', {
+      body: { email: email.toLowerCase().trim() },
+    });
 
     if (error) {
-      if (error.code === '23505') {
-        return { success: false, message: 'Cet email est déjà abonné à notre newsletter.' };
-      }
       return { success: false, message: 'Une erreur est survenue. Veuillez réessayer.' };
     }
 
-    return { success: true, message: 'Merci ! Vous êtes maintenant abonné à notre newsletter.' };
+    return {
+      success: true,
+      message: 'Vérifiez votre boîte e-mail pour confirmer ou gérer votre inscription.',
+    };
   }
 
-  async unsubscribe(email: string): Promise<{ success: boolean; message: string }> {
-    const { error } = await supabase
-      .from('newsletter_subscribers')
-      .update({ is_active: false, unsubscribed_at: new Date().toISOString() })
-      .eq('email', email.toLowerCase().trim());
+  async unsubscribe(token: string): Promise<{ success: boolean; message: string }> {
+    const { data, error } = await supabase.rpc('unsubscribe_newsletter', {
+      p_token: token,
+    });
 
     if (error) {
       return { success: false, message: 'Une erreur est survenue. Veuillez réessayer.' };
+    }
+
+    if (!data) {
+      return { success: false, message: 'Ce lien de désinscription est invalide ou expiré.' };
     }
 
     return { success: true, message: 'Vous avez été désabonné de notre newsletter.' };

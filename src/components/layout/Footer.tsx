@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Phone, Mail, Send, CheckCircle } from 'lucide-react';
 import { useSubscribeNewsletter } from '@/hooks/useNewsletter';
+import { CONTACT_EMAIL, CONTACT_PHONES } from '@/lib/constants';
 
 export function Footer() {
   const [email, setEmail] = useState('');
@@ -144,13 +145,19 @@ export function Footer() {
                 <MapPin className="w-4 h-4 mt-0.5 shrink-0 text-secondary-400" />
                 <span>Les Gonaïves, Artibonite, Haïti</span>
               </li>
-              <li className="flex items-center gap-3 text-primary-300 text-sm">
-                <Phone className="w-4 h-4 shrink-0 text-secondary-400" />
-                <span>+509 2813-1234</span>
+              <li className="flex items-start gap-3 text-primary-300 text-sm">
+                <Phone className="w-4 h-4 mt-0.5 shrink-0 text-secondary-400" />
+                <div className="flex flex-col gap-1">
+                  {CONTACT_PHONES.map((phone) => (
+                    <a key={phone.number} href={`tel:${phone.number}`} className="hover:text-secondary-400">
+                      {phone.label}
+                    </a>
+                  ))}
+                </div>
               </li>
               <li className="flex items-center gap-3 text-primary-300 text-sm">
                 <Mail className="w-4 h-4 shrink-0 text-secondary-400" />
-                <span>info@ciento-immobilier.com</span>
+                <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-secondary-400">{CONTACT_EMAIL}</a>
               </li>
             </ul>
           </div>

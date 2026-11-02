@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import type { City, Neighborhood, Category, Agency, Agent, Profile } from '@/types';
+import type { City, Neighborhood, Category, Agency, Agent } from '@/types';
 
 class CitiesService {
   async getAll(): Promise<City[]> {
@@ -79,7 +79,7 @@ class AgenciesService {
   async getBySlug(slug: string): Promise<Agency | null> {
     const { data, error } = await supabase
       .from('agencies')
-      .select('*, city:cities(name, slug), owner:profiles(id, first_name, last_name, avatar_url, phone)')
+      .select('*, city:cities(name, slug), owner:public_profiles!agencies_owner_id_fkey(id, first_name, last_name, avatar_url)')
       .eq('slug', slug)
       .single();
 
@@ -92,7 +92,7 @@ class AgentsService {
   async getAll(limit?: number): Promise<Agent[]> {
     let query = supabase
       .from('agents')
-      .select('*, profile:profiles(id, first_name, last_name, avatar_url, phone), agency:agencies(id, name, slug)')
+      .select('*, profile:public_profiles!agents_profile_id_fkey(id, first_name, last_name, avatar_url), agency:agencies(id, name, slug)')
       .eq('is_active', true)
       .order('rating_avg', { ascending: false });
 
@@ -106,7 +106,7 @@ class AgentsService {
   async getBySlug(slug: string): Promise<Agent | null> {
     const { data, error } = await supabase
       .from('agents')
-      .select('*, profile:profiles(id, first_name, last_name, avatar_url, phone, bio), agency:agencies(id, name, slug, logo_url)')
+      .select('*, profile:public_profiles!agents_profile_id_fkey(id, first_name, last_name, avatar_url, bio), agency:agencies(id, name, slug, logo_url)')
       .eq('slug', slug)
       .single();
 
@@ -115,48 +115,7 @@ class AgentsService {
   }
 }
 
-class UsersService {
-  async getAll(page: number = 1, perPage: number = 20) {
-    const from = (page - 1) * perPage;
-    const to = from + perPage - 1;
-
-    const { data, error, count } = await supabase
-      .from('profiles')
-      .select('*', { count: 'exact' })
-      .range(from, to)
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-    return { data: data as Profile[], count: count || 0 };
-  }
-
-  async updateRole(userId: string, role: string) {
-    const { data, error } = await supabase
-      .from('profiles')
-      .update({ role, updated_at: new Date().toISOString() })
-      .eq('id', userId)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data as Profile;
-  }
-
-  async toggleActive(userId: string, isActive: boolean) {
-    const { data, error } = await supabase
-      .from('profiles')
-      .update({ is_active: isActive, updated_at: new Date().toISOString() })
-      .eq('id', userId)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data as Profile;
-  }
-}
-
 export const citiesService = new CitiesService();
 export const categoriesService = new CategoriesService();
 export const agenciesService = new AgenciesService();
 export const agentsService = new AgentsService();
-export const usersService = new UsersService();

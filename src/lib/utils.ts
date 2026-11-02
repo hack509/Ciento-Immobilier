@@ -81,6 +81,31 @@ export function getStatusColor(status: string): 'success' | 'warning' | 'primary
   return colors[status] || 'default';
 }
 
+export function getStatusLabel(status: string): string {
+  const labels: Record<string, string> = {
+    draft: 'Brouillon',
+    pending: 'En attente de validation',
+    active: 'En ligne',
+    sold: 'Vendu',
+    rented: 'Loué',
+    expired: 'Expirée',
+    suspended: 'Refusée',
+  };
+  return labels[status] || status;
+}
+
+export function getRoleLabel(role: string): string {
+  const labels: Record<string, string> = {
+    super_admin: 'Super administrateur',
+    admin: 'Administrateur',
+    agency: 'Agence',
+    agent: 'Agent immobilier',
+    owner: 'Propriétaire',
+    client: 'Client',
+  };
+  return labels[role] || role;
+}
+
 export function getListingTypeLabel(type: string): string {
   const labels: Record<string, string> = {
     sale: 'À vendre',
