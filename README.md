@@ -39,7 +39,8 @@ supabase/
     ├── 001-007        # Core schema (extensions, enums, tables, indexes, RLS, functions, seed)
     ├── 008-009        # Newsletter feature
     ├── 010-013        # Storage, profile creation, security fixes, messaging RPCs
-    └── 014            # Security hardening for deployed projects
+    ├── 014-015        # Security hardening, admin moderation
+    └── 016-018        # Marketplace, monetization & payments, admin audit (see docs/PLATEFORME-MARKETPLACE.md)
 ```
 
 ## TypeScript Configuration
@@ -63,6 +64,8 @@ Key compiler options:
 | `npm run typecheck` | Type-check only (`tsc --noEmit`) |
 | `npm run lint` | Run Oxlint |
 | `npm run preview` | Preview production build |
+| `npm test` | Unit & component tests (Vitest) |
+| `npm run test:db` | Applies all migrations on a throw-away Postgres (Docker) and runs the RLS / payment test-suite |
 
 ## Quick Start
 

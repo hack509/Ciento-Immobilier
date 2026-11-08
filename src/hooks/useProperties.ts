@@ -18,6 +18,14 @@ export function useFeaturedProperties(limit: number = 6) {
   });
 }
 
+export function useSponsoredProperties(limit: number = 6) {
+  return useQuery({
+    queryKey: ['properties', 'sponsored', limit],
+    queryFn: () => propertiesService.getSponsored(limit),
+    staleTime: 2 * 60 * 1000,
+  });
+}
+
 export function useRecentProperties(limit: number = 8) {
   return useQuery({
     queryKey: ['properties', 'recent', limit],

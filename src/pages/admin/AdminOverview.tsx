@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
-import { Users, Building2, Clock, Flag, Mail, ArrowRight, ClipboardCheck } from 'lucide-react';
+import { Users, Building2, Clock, Flag, Mail, ArrowRight, ClipboardCheck, Building, CreditCard, Megaphone, Briefcase, Banknote, Repeat, Inbox, MonitorPlay } from 'lucide-react';
+import { useAdminQuery } from '@/hooks/useAdminMarketplace';
+import { adminMarketplaceService } from '@/services/admin-marketplace.service';
 import { Button } from '@/components/ui/Button';
 import { PageHeader, Panel, StatCard } from '@/components/dashboard/DashboardUI';
 import { useAdminStats, useModerationQueue } from '@/hooks/useAdmin';
@@ -9,6 +11,7 @@ export function AdminOverview() {
   const { data: stats, isError } = useAdminStats();
   const { data: pending, isLoading } = useModerationQueue({ status: 'pending', page: 1 });
   const preview = pending?.data.slice(0, 5) ?? [];
+  const { data: market } = useAdminQuery(['marketplace-stats'], () => adminMarketplaceService.getStats());
 
   return (
     <div>
@@ -26,6 +29,18 @@ export function AdminOverview() {
         <StatCard icon={Users} label="Utilisateurs" value={stats?.users} to="/admin/utilisateurs" />
         <StatCard icon={Flag} tone="warning" label="Signalements ouverts" value={stats?.openReports} to="/admin/signalements" />
         <StatCard icon={Mail} label="Abonnés newsletter" value={stats?.newsletterSubscribers} />
+      </div>
+
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500">Marketplace & revenus</h2>
+      <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <StatCard icon={Banknote} tone="navy" label="Revenus du mois (HTG)" value={market?.revenue_month} to="/admin/rapports" />
+        <StatCard icon={Repeat} tone="gold" label="Abonnements actifs" value={market?.subscriptions_active} to="/admin/abonnements" />
+        <StatCard icon={CreditCard} tone="warning" label="Paiements en attente" value={market?.payments_pending} to="/admin/paiements" />
+        <StatCard icon={Building} label="Agences à valider" value={market?.agencies_pending} hint={`${market?.agencies_total ?? 0} agence(s) au total`} to="/admin/agences" />
+        <StatCard icon={Megaphone} label="Promotions en cours" value={market?.promotions_active} to="/admin/promotions" />
+        <StatCard icon={Briefcase} label="Demandes de services" value={market?.service_requests_new} hint="Nouvelles" to="/admin/services" />
+        <StatCard icon={MonitorPlay} label="Campagnes en ligne" value={market?.ad_campaigns_live} to="/admin/publicites" />
+        <StatCard icon={Inbox} label="Contacts (7 jours)" value={market?.inquiries_week} />
       </div>
 
       <Panel

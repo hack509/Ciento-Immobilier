@@ -1,18 +1,21 @@
 import { Shield, Mail, Phone, MapPin } from 'lucide-react';
+import { PageHero } from '@/components/ui/PageHero';
+import { Head } from '@/components/seo/Head';
 import { CONTACT_EMAIL, CONTACT_PHONES } from '@/lib/constants';
 
 export function Privacy() {
   return (
     <div className="bg-gray-50 min-h-screen">
-      <div className="bg-white border-b border-gray-100">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center gap-3 mb-2">
-            <Shield className="w-6 h-6 text-secondary-500" />
-            <h1 className="text-2xl font-bold text-gray-900">Politique de Confidentialité</h1>
-          </div>
-          <p className="text-gray-500 text-sm">Dernière mise à jour : Juillet 2026</p>
-        </div>
-      </div>
+      <Head title="Politique de Confidentialité" url="/confidentialite" />
+      <PageHero
+        eyebrow="Informations légales"
+        icon={Shield}
+        title="Politique de"
+        highlight="confidentialité"
+        subtitle="Dernière mise à jour : Juillet 2026"
+        breadcrumbs={[{ label: 'Accueil', to: '/' }, { label: 'Confidentialité' }]}
+        size="sm"
+      />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white rounded-xl shadow-sm p-8 space-y-8">

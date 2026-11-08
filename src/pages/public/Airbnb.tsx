@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { PageHero } from '@/components/ui/PageHero';
+import { Head } from '@/components/seo/Head';
 import { Search, SlidersHorizontal, Home, CalendarDays, Users, Star } from 'lucide-react';
 import { PropertyCardSkeleton } from '@/components/ui/Skeleton';
 import { PropertyCard } from '@/components/ui/PropertyCard';
@@ -47,19 +49,16 @@ export function Airbnb() {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <div className="bg-gradient-to-r from-rose-500 to-rose-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-              <Home className="w-5 h-5 text-white" />
-            </div>
-            <h1 className="text-2xl font-bold text-white">Locations de vacances</h1>
-          </div>
-          <p className="text-white/80 ml-[52px]">
-            Trouvez un séjour idéal parmi des centaines d&apos;annonces vérifiées aux Gonaïves
-          </p>
-        </div>
-      </div>
+      <Head title="Locations de courte durée" description="Locations de vacances et séjours de courte durée aux Gonaïves et en Haïti." url="/airbnb" />
+      <PageHero
+        eyebrow="Courte durée"
+        icon={Home}
+        title="Locations"
+        highlight="de vacances"
+        subtitle="Trouvez un séjour idéal parmi des centaines d’annonces vérifiées aux Gonaïves"
+        breadcrumbs={[{ label: 'Accueil', to: '/' }, { label: 'Courte durée' }]}
+        size="sm"
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">

@@ -6,3 +6,6 @@ verify_jwt = false
 
 [functions.newsletter-manage]
 verify_jwt = false
+
+[functions.payments]
+verify_jwt = true

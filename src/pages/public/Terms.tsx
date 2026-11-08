@@ -1,18 +1,21 @@
 import { FileText, Mail, Phone, MapPin } from 'lucide-react';
+import { PageHero } from '@/components/ui/PageHero';
+import { Head } from '@/components/seo/Head';
 import { CONTACT_EMAIL, CONTACT_PHONES } from '@/lib/constants';
 
 export function Terms() {
   return (
     <div className="bg-gray-50 min-h-screen">
-      <div className="bg-white border-b border-gray-100">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center gap-3 mb-2">
-            <FileText className="w-6 h-6 text-secondary-500" />
-            <h1 className="text-2xl font-bold text-gray-900">Conditions d&apos;Utilisation</h1>
-          </div>
-          <p className="text-gray-500 text-sm">Dernière mise à jour : Juillet 2026</p>
-        </div>
-      </div>
+      <Head title="Conditions d'Utilisation" url="/conditions" />
+      <PageHero
+        eyebrow="Informations légales"
+        icon={FileText}
+        title="Conditions"
+        highlight="d’utilisation"
+        subtitle="Dernière mise à jour : Juillet 2026"
+        breadcrumbs={[{ label: 'Accueil', to: '/' }, { label: 'Conditions' }]}
+        size="sm"
+      />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white rounded-xl shadow-sm p-8 space-y-8">

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, SlidersHorizontal, X, SearchX } from 'lucide-react';
+import { Search, SlidersHorizontal, X, SearchX, ChevronDown, Building2 } from 'lucide-react';
+import { PageHero } from '@/components/ui/PageHero';
+import { AdSlot } from '@/components/ads/AdSlot';
 import { PropertyCardSkeleton } from '@/components/ui/Skeleton';
 import { PropertyCard } from '@/components/ui/PropertyCard';
 import { Pagination } from '@/components/ui/Pagination';
@@ -8,13 +10,15 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
 import { Head } from '@/components/seo/Head';
 import { useProperties } from '@/hooks/useProperties';
-import { useCities } from '@/hooks/useCities';
+import { useCities, useNeighborhoods } from '@/hooks/useCities';
 import { useDebounce } from '@/hooks';
-import { PROPERTY_TYPES, LISTING_TYPES, PRICE_RANGES } from '@/lib/constants';
+import { PROPERTY_TYPES, LISTING_TYPES, PRICE_RANGES, BEDROOM_OPTIONS } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import type { PropertyType, ListingType } from '@/types';
 
-const FILTER_KEYS = ['q', 'property_type', 'listing_type', 'city_id', 'min_price', 'max_price', 'page'] as const;
+const FILTER_KEYS = ['q', 'property_type', 'listing_type', 'city_id', 'neighborhood_id', 'min_price', 'max_price', 'bedrooms', 'bathrooms', 'min_area', 'availability', 'page'] as const;
+
+const AREA_OPTIONS = [50, 100, 200, 500, 1000] as const;
 type FilterKey = (typeof FILTER_KEYS)[number];
 
 const selectClass =
@@ -29,6 +33,7 @@ const toNumber = (value: string | null) => (value === null || value === '' ? und
 export function Properties() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   // Local text state keeps typing smooth; the URL is updated with the debounced value
   const [search, setSearch] = useState(searchParams.get('q') ?? '');
   const debouncedSearch = useDebounce(search, 400);
@@ -39,6 +44,11 @@ export function Properties() {
   const minPrice = toNumber(searchParams.get('min_price'));
   const maxPrice = toNumber(searchParams.get('max_price'));
   const page = toNumber(searchParams.get('page')) ?? 1;
+  const neighborhoodId = searchParams.get('neighborhood_id') ?? '';
+  const bedrooms = toNumber(searchParams.get('bedrooms'));
+  const bathrooms = toNumber(searchParams.get('bathrooms'));
+  const minArea = toNumber(searchParams.get('min_area'));
+  const availableNow = searchParams.get('availability') === 'now';
   const budgetIndex = PRICE_RANGES.findIndex((r) => r.min === minPrice && r.max === maxPrice);
 
   /** Applies filter changes to the URL; any filter change resets pagination. */
@@ -68,6 +78,7 @@ export function Properties() {
   }, [debouncedSearch, setSearchParams]);
 
   const { data: cities } = useCities();
+  const { data: neighborhoods } = useNeighborhoods(cityId);
   const { data, isLoading } = useProperties({
     query: searchParams.get('q') || undefined,
     property_type: propertyType || undefined,
@@ -75,6 +86,11 @@ export function Properties() {
     city_id: cityId || undefined,
     min_price: minPrice,
     max_price: maxPrice,
+    neighborhood_id: neighborhoodId || undefined,
+    bedrooms,
+    bathrooms,
+    min_area: minArea,
+    availability: availableNow ? 'now' : undefined,
     page,
     per_page: 12,
   });
@@ -84,7 +100,8 @@ export function Properties() {
     updateFilters({ min_price: range?.min, max_price: range?.max });
   };
 
-  const activeFilterCount = [propertyType, listingType, cityId, minPrice !== undefined].filter(Boolean).length;
+  const advancedCount = [neighborhoodId, bedrooms, bathrooms, minArea, availableNow].filter(Boolean).length;
+  const activeFilterCount = [propertyType, listingType, cityId, minPrice !== undefined].filter(Boolean).length + advancedCount;
   const count = data?.count ?? 0;
 
   const resetFilters = () => {
@@ -107,7 +124,7 @@ export function Properties() {
         </select>
       </label>
       <label className="block">
-        <select value={cityId} onChange={(e) => updateFilters({ city_id: e.target.value })} className={cn(selectClass, cityId && activeSelectClass)} aria-label="Ville">
+        <select value={cityId} onChange={(e) => updateFilters({ city_id: e.target.value, neighborhood_id: undefined })} className={cn(selectClass, cityId && activeSelectClass)} aria-label="Ville">
           <option value="">Toutes les villes</option>
           {(cities || []).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
         </select>
@@ -121,17 +138,55 @@ export function Properties() {
     </>
   );
 
+  const advancedFields = (
+    <>
+      <label className="block">
+        <select value={neighborhoodId} disabled={!cityId} onChange={(e) => updateFilters({ neighborhood_id: e.target.value })}
+          className={cn(selectClass, neighborhoodId && activeSelectClass, !cityId && 'opacity-60 cursor-not-allowed')} aria-label="Quartier">
+          <option value="">{cityId ? 'Tous les quartiers' : 'Quartier (choisir une ville)'}</option>
+          {(neighborhoods || []).map((n) => <option key={n.id} value={n.id}>{n.name}</option>)}
+        </select>
+      </label>
+      <label className="block">
+        <select value={bedrooms ?? ''} onChange={(e) => updateFilters({ bedrooms: e.target.value })} className={cn(selectClass, bedrooms && activeSelectClass)} aria-label="Chambres">
+          <option value="">Chambres</option>
+          {BEDROOM_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label} chambre{o.value > 1 ? 's' : ''}</option>)}
+        </select>
+      </label>
+      <label className="block">
+        <select value={bathrooms ?? ''} onChange={(e) => updateFilters({ bathrooms: e.target.value })} className={cn(selectClass, bathrooms && activeSelectClass)} aria-label="Salles de bain">
+          <option value="">Salles de bain</option>
+          {[1, 2, 3, 4].map((n) => <option key={n} value={n}>{n}+ SDB</option>)}
+        </select>
+      </label>
+      <label className="block">
+        <select value={minArea ?? ''} onChange={(e) => updateFilters({ min_area: e.target.value })} className={cn(selectClass, minArea && activeSelectClass)} aria-label="Surface minimum">
+          <option value="">Surface</option>
+          {AREA_OPTIONS.map((a) => <option key={a} value={a}>{a} m² et +</option>)}
+        </select>
+      </label>
+      <label className={cn('flex min-h-[46px] cursor-pointer items-center gap-2 rounded-xl border px-4 text-sm font-semibold text-primary-900 transition-colors',
+        availableNow ? 'border-secondary-500 bg-secondary-50' : 'border-primary-200 bg-primary-50 hover:bg-primary-100')}>
+        <input type="checkbox" checked={availableNow} onChange={(e) => updateFilters({ availability: e.target.checked ? 'now' : undefined })} className="h-4 w-4 accent-[#1D3E91]" />
+        Disponible maintenant
+      </label>
+    </>
+  );
+
   return (
     <>
       <Head title="Annonces immobilières" description="Découvrez toutes les annonces immobilières aux Gonaïves et en Haïti. Achetez, louez ou vendez des biens." />
       <div className="bg-gray-50 min-h-screen">
-        <div className="bg-primary-900">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-20">
-            <p className="eyebrow !text-secondary-400 mb-2">Annonces</p>
-            <h1 className="text-3xl lg:text-4xl font-bold text-white">Trouvez votre prochain bien</h1>
-            <p className="mt-2 text-primary-200">Maisons, appartements, terrains et locaux aux Gonaïves et en Haïti.</p>
-          </div>
-        </div>
+        <PageHero
+          eyebrow="Annonces"
+          icon={Building2}
+          title="Trouvez votre"
+          highlight="prochain bien"
+          subtitle="Maisons, appartements, terrains et locaux aux Gonaïves et en Haïti. Consultation 100 % gratuite."
+          breadcrumbs={[{ label: 'Accueil', to: '/' }, { label: 'Annonces' }]}
+          overlap
+          size="sm"
+        />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 pb-16">
           {/* Filter bar */}
@@ -162,6 +217,14 @@ export function Properties() {
                   </span>
                 )}
               </button>
+            </div>
+            <div className="hidden lg:block">
+              <button type="button" onClick={() => setMoreOpen((v) => !v)} aria-expanded={moreOpen}
+                className="mt-2 inline-flex min-h-[36px] items-center gap-1.5 rounded-lg px-2 text-xs font-semibold text-brand-blue hover:bg-primary-50">
+                <ChevronDown className={cn('h-4 w-4 transition-transform', moreOpen && 'rotate-180')} />
+                Plus de critères{advancedCount > 0 ? ` (${advancedCount})` : ''}
+              </button>
+              {(moreOpen || advancedCount > 0) && <div className="mt-2 grid grid-cols-5 gap-3">{advancedFields}</div>}
             </div>
           </div>
 
@@ -195,6 +258,8 @@ export function Properties() {
             )}
           </div>
 
+          <AdSlot placement="search_inline" className="mt-8" />
+
           {data && data.total_pages > 1 && (
             <Pagination
               currentPage={data.page}
@@ -226,7 +291,7 @@ export function Properties() {
                 <X className="h-5 w-5 text-gray-500" />
               </button>
             </div>
-            <div className="space-y-3 p-5">{filterFields}</div>
+            <div className="space-y-3 p-5">{filterFields}{advancedFields}</div>
             <div className="sticky bottom-0 flex gap-3 border-t border-gray-100 bg-white px-5 py-4">
               <Button variant="outline" className="flex-1" onClick={resetFilters}>Réinitialiser</Button>
               <Button className="flex-1" onClick={() => setMobileFiltersOpen(false)}>
