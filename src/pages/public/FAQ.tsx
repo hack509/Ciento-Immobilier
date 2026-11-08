@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
+import { PageHero } from '@/components/ui/PageHero';
+import { Head } from '@/components/seo/Head';
 import { HelpCircle, ChevronDown, Search, Mail, Phone, MapPin } from 'lucide-react';
 import { CONTACT_EMAIL, CONTACT_PHONES } from '@/lib/constants';
 
@@ -137,15 +139,16 @@ export function FAQ() {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <div className="bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center gap-3 mb-2">
-            <HelpCircle className="w-6 h-6 text-secondary-500" />
-            <h1 className="text-2xl font-bold text-gray-900">Questions Fréquentes</h1>
-          </div>
-          <p className="text-gray-500">Trouvez rapidement les réponses à vos questions</p>
-        </div>
-      </div>
+      <Head title="Questions fréquentes" description="Réponses aux questions fréquentes sur Ciento-Immobilier : annonces, comptes, sécurité, offres professionnelles." url="/faq" />
+      <PageHero
+        eyebrow="Aide"
+        icon={HelpCircle}
+        title="Questions"
+        highlight="fréquentes"
+        subtitle="Trouvez rapidement les réponses à vos questions"
+        breadcrumbs={[{ label: 'Accueil', to: '/' }, { label: 'FAQ' }]}
+        size="sm"
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
 

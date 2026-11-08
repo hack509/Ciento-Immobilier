@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import { MapPin, BedDouble, Bath, Maximize, Heart, ImageOff } from 'lucide-react';
 import { cn, formatPrice, getListingTypeLabel, getPropertyTypeLabel } from '@/lib/utils';
 import type { Property } from '@/types';
+import { isPremium, isSponsored } from '@/lib/monetization';
+import { PremiumBadge, SponsoredBadge } from './PromoBadges';
 
 interface PropertyCardProps {
   property: Property;
@@ -16,11 +18,14 @@ export function PropertyCard({ property, className, onFavorite, isFavorited = fa
   const href = `/annonces/${property.city?.slug || 'inconnu'}/${property.slug}`;
   const isRent = property.listing_type === 'rent';
   const area = property.building_area || property.land_area;
+  const sponsored = isSponsored(property);
+  const premium = isPremium(property);
 
   return (
     <article className={cn(
       'group relative flex flex-col bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-card',
       'transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1',
+      premium && 'border-brand-blue/40 ring-1 ring-brand-yellow/50',
       className
     )}>
       <div className="relative aspect-[4/3] overflow-hidden bg-primary-50">
@@ -47,7 +52,9 @@ export function PropertyCard({ property, className, onFavorite, isFavorited = fa
           )}>
             {getListingTypeLabel(property.listing_type)}
           </span>
-          {property.is_featured && (
+          {sponsored && <SponsoredBadge />}
+          {premium && <PremiumBadge />}
+          {property.is_featured && !sponsored && (
             <span className="rounded-md bg-white/95 px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-primary-900">
               En vedette
             </span>

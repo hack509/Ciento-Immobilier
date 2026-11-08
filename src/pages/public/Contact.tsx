@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { PageHero } from '@/components/ui/PageHero';
 import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -62,12 +63,15 @@ export function Contact() {
     <>
       <Head title="Contact" description="Contactez l'équipe Ciento-Immobilier. Nous sommes là pour vous aider avec vos projets immobiliers." />
       <div className="bg-gray-50 min-h-screen">
-      <div className="bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Contactez-nous</h1>
-          <p className="text-gray-500">Nous sommes là pour vous aider</p>
-        </div>
-      </div>
+      <PageHero
+        eyebrow="Contact"
+        icon={Mail}
+        title="Contactez"
+        highlight="notre équipe"
+        subtitle="Nous sommes là pour vous aider dans tous vos projets immobiliers."
+        breadcrumbs={[{ label: 'Accueil', to: '/' }, { label: 'Contact' }]}
+        size="sm"
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <div>

@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom';
+import { PageHero } from '@/components/ui/PageHero';
+import { Head } from '@/components/seo/Head';
 import { Tag, UserPlus, Camera, Handshake, ArrowRight, TrendingUp, Shield, Headphones, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { PropertyCard } from '@/components/ui/PropertyCard';
@@ -56,24 +58,19 @@ export function Sell() {
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Hero */}
-      <div className="bg-gradient-to-r from-primary-700 to-primary-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-              <Tag className="w-6 h-6 text-white" />
-            </div>
-          </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight mb-4">
-            Vendez votre bien<br />
-            <span className="text-secondary-400">rapidement et en confiance</span>
-          </h1>
-          <p className="text-lg text-white/80 mb-8 max-w-xl leading-relaxed">
-            Publiez votre annonce gratuitement sur la plateforme immobilière
-            n°1 aux Gonaïves et touvez l&apos;acheteur idéal.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4">
+      <Head title="Vendre un bien" description="Publiez gratuitement votre annonce de vente aux Gonaïves et trouvez l'acheteur idéal. Options de visibilité pour vendre plus vite." url="/vendre" />
+      <PageHero
+        eyebrow="Vendre"
+        icon={Tag}
+        title="Vendez votre bien"
+        highlight="rapidement et en confiance"
+        subtitle="Publiez votre annonce gratuitement sur la plateforme immobilière n°1 aux Gonaïves et trouvez l’acheteur idéal."
+        breadcrumbs={[{ label: 'Accueil', to: '/' }, { label: 'Vendre' }]}
+        size="lg"
+        actions={
+          <>
             <Link to="/auth/inscription">
-              <Button size="lg" className="bg-secondary-500 hover:bg-secondary-400 text-primary-900 font-semibold">
+              <Button size="lg">
                 Publier une annonce
                 <ArrowRight className="w-4 h-4" />
               </Button>
@@ -83,9 +80,14 @@ export function Sell() {
                 Voir les annonces à vendre
               </Button>
             </Link>
-          </div>
-        </div>
-      </div>
+            <Link to="/services/accompagnement-vente">
+              <Button variant="outlineLight" size="lg">
+                Être accompagné
+              </Button>
+            </Link>
+          </>
+        }
+      />
 
       {/* Steps */}
       <section className="py-16">

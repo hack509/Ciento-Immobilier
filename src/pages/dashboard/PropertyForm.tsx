@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Save, Trash2 } from 'lucide-react';
 import { useForm, type Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -25,6 +25,7 @@ import { storageService } from '@/services/storage.service';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { PROPERTY_TYPES, LISTING_TYPES } from '@/lib/constants';
 import type { Property, PropertyImage, Amenity } from '@/types';
+import { errorMessage } from '@/lib/monetization';
 
 const propertySchema = z.object({
   title: z.string().min(5, 'Le titre doit contenir au moins 5 caractères'),
@@ -46,6 +47,7 @@ const propertySchema = z.object({
   floors: z.coerce.number().min(1).default(1),
   year_built: z.coerce.number().optional(),
   address: z.string().optional(),
+  available_from: z.string().optional(),
 });
 
 type PropertyFormData = z.infer<typeof propertySchema>;
@@ -57,6 +59,10 @@ export function PropertyForm() {
   const { profile } = useAuth();
   const queryClient = useQueryClient();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [saveError, setSaveError] = useState<{ message: string; quota: boolean } | null>(null);
+  // New listing published for an agency (portfolio page passes ?agence=<id>); verified by the database.
+  const [searchParams] = useSearchParams();
+  const agencyIdForNew = searchParams.get('agence');
 
   const createProperty = useCreateProperty();
   const updateProperty = useUpdateProperty();
@@ -127,6 +133,7 @@ export function PropertyForm() {
         floors: existingProperty.floors,
         year_built: existingProperty.year_built,
         address: existingProperty.address || '',
+        available_from: existingProperty.available_from || '',
       });
       setSelectedAmenities(
         existingProperty.amenities?.map((a: Amenity) => a.id) || []
@@ -142,9 +149,12 @@ export function PropertyForm() {
 
   const onSubmit = async (data: PropertyFormData) => {
     try {
+      setSaveError(null);
       const payload = {
         ...data,
-        owner_id: profile?.id,
+        // The owner is set once at creation (immutable afterwards, enforced in the database).
+        ...(isEdit ? {} : { owner_id: profile?.id, agency_id: agencyIdForNew || null }),
+        available_from: data.available_from || null,
         neighborhood_id: data.neighborhood_id || null,
         address: data.address || null,
         land_area: data.land_area || null,
@@ -170,6 +180,8 @@ export function PropertyForm() {
       navigate('/dashboard/annonces');
     } catch (err) {
       console.error('Property save error:', err);
+      const message = errorMessage(err, 'Impossible d’enregistrer l’annonce.');
+      setSaveError({ message, quota: /limite/i.test(message) });
     }
   };
 
@@ -296,6 +308,12 @@ export function PropertyForm() {
               label="Adresse"
               placeholder="Adresse ou quartier"
               {...register('address')}
+            />
+            <Input
+              label="Disponible à partir du (optionnel)"
+              type="date"
+              helperText="Laissez vide si le bien est disponible immédiatement."
+              {...register('available_from')}
             />
           </div>
         </section>
@@ -426,6 +444,15 @@ export function PropertyForm() {
             Après l'enregistrement, votre annonce sera soumise à validation avant sa publication.
           </p>
         </section>
+
+        {saveError && (
+          <div role="alert" className="flex flex-col gap-3 rounded-xl bg-danger-50 p-4 text-sm text-danger-600 sm:flex-row sm:items-center">
+            <span className="flex-1">{saveError.message}</span>
+            {saveError.quota && (
+              <Link to="/dashboard/abonnement"><Button type="button" size="sm" variant="secondary">Voir les formules</Button></Link>
+            )}
+          </div>
+        )}
 
         {/* Actions */}
         <div className="flex items-center justify-end gap-3 pb-8">

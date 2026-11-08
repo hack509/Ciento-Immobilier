@@ -1,15 +1,16 @@
 import { Link } from 'react-router-dom';
 import {
   ArrowRight, Home as HomeIcon, Building2, Store, Mountain, Castle, Landmark,
-  ShieldCheck, MapPinned, Headset, Search, MessageSquare, KeyRound, CheckCircle2, Plus,
+  ShieldCheck, MapPinned, Headset, Search, MessageSquare, KeyRound, CheckCircle2, Plus, Megaphone, BadgeDollarSign,
 } from 'lucide-react';
+import { AdSlot } from '@/components/ads/AdSlot';
 import { Button } from '@/components/ui/Button';
 import { PropertyCard } from '@/components/ui/PropertyCard';
 import { PropertyCardSkeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Head } from '@/components/seo/Head';
 import { HeroSearch } from '@/components/home/HeroSearch';
-import { useFeaturedProperties } from '@/hooks/useProperties';
+import { useFeaturedProperties, useSponsoredProperties } from '@/hooks/useProperties';
 import { PROPERTY_TYPES } from '@/lib/constants';
 
 const typeIcons: Record<(typeof PROPERTY_TYPES)[number]['value'], typeof HomeIcon> = {
@@ -57,6 +58,7 @@ function SectionHeading({ eyebrow, title, subtitle, action }: {
 
 export function Home() {
   const { data: featuredProperties, isLoading: isLoadingFeatured } = useFeaturedProperties(6);
+  const { data: sponsoredProperties } = useSponsoredProperties(6);
 
   return (
     <div>
@@ -145,6 +147,24 @@ export function Home() {
         </div>
       </section>
 
+      {/* Sponsored listings (paid visibility) — hidden when there is none */}
+      {sponsoredProperties && sponsoredProperties.length > 0 && (
+        <section className="bg-white py-12 sm:py-16" aria-labelledby="sponsored-title">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="eyebrow mb-2 flex items-center gap-1.5"><Megaphone className="h-3.5 w-3.5" />Annonces sponsorisées</p>
+                <h2 id="sponsored-title" className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary-900">À la une cette semaine</h2>
+              </div>
+              <Link to="/tarifs" className="shrink-0 text-sm font-semibold text-brand-blue hover:underline">Mettre mon annonce en avant</Link>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+              {sponsoredProperties.map((property) => <PropertyCard key={property.id} property={property} />)}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Featured */}
       <section className="bg-gray-50 py-12 sm:py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -178,6 +198,12 @@ export function Home() {
           </div>
         </div>
       </section>
+
+      <div className="bg-gray-50 pb-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AdSlot placement="home_banner" />
+        </div>
+      </div>
 
       {/* How it works */}
       <section className="bg-white py-12 sm:py-16 lg:py-24">
@@ -216,9 +242,14 @@ export function Home() {
                   Publiez votre annonce en quelques minutes et recevez les demandes
                   des acheteurs et locataires directement dans votre messagerie.
                 </p>
-                <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                <div className="mt-8 flex flex-col sm:flex-row sm:flex-wrap gap-3">
                   <Link to="/dashboard/annonces/nouvelle">
                     <Button size="lg" icon={<Plus className="w-4 h-4" />}>Publier une annonce</Button>
+                  </Link>
+                  <Link to="/tarifs">
+                    <Button size="lg" variant="outlineLight" icon={<BadgeDollarSign className="w-4 h-4" />}>
+                      Offres professionnelles
+                    </Button>
                   </Link>
                   <Link to="/contact">
                     <Button size="lg" variant="outlineLight">

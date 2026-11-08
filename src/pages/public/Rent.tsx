@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { PageHero } from '@/components/ui/PageHero';
+import { Head } from '@/components/seo/Head';
 import { Search, SlidersHorizontal, KeyRound } from 'lucide-react';
 import { PropertyCardSkeleton } from '@/components/ui/Skeleton';
 import { PropertyCard } from '@/components/ui/PropertyCard';
@@ -40,19 +42,16 @@ export function Rent() {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <div className="bg-gradient-to-r from-secondary-500 to-secondary-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-              <KeyRound className="w-5 h-5 text-white" />
-            </div>
-            <h1 className="text-2xl font-bold text-white">Louer un bien</h1>
-          </div>
-          <p className="text-white/80 ml-[52px]">
-            Trouvez la location idéale parmi des centaines d&apos;annonces vérifiées aux Gonaïves
-          </p>
-        </div>
-      </div>
+      <Head title="Louer un bien" description="Maisons et appartements à louer aux Gonaïves et en Haïti : annonces vérifiées, contact direct avec les propriétaires." url="/louer" />
+      <PageHero
+        eyebrow="Location"
+        icon={KeyRound}
+        title="Louer un bien"
+        highlight="en toute confiance"
+        subtitle="Trouvez la location idéale parmi des centaines d’annonces vérifiées aux Gonaïves"
+        breadcrumbs={[{ label: 'Accueil', to: '/' }, { label: 'Louer' }]}
+        size="sm"
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-xl border border-gray-200 p-4 mb-6">

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Search, Heart, Home, Building2, Phone, ChevronDown, User, Plus, KeyRound, Sun } from 'lucide-react';
+import { Search, Heart, Home, Building2, Phone, ChevronDown, User, Plus, KeyRound, Sun, Briefcase, Building } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -20,6 +20,9 @@ export function Header() {
     { to: '/vendre', label: 'Vendre', icon: Building2 },
     { to: '/airbnb', label: 'Courte durée', icon: Sun },
     { to: '/agents', label: 'Agents', icon: User },
+    // New sections: shown on wide desktops and in the mobile menu (keeps the lg bar uncluttered).
+    { to: '/agences', label: 'Agences', icon: Building, wideOnly: true },
+    { to: '/services', label: 'Services', icon: Briefcase, wideOnly: true },
     { to: '/contact', label: 'Contact', icon: Phone },
   ];
 
@@ -134,7 +137,8 @@ export function Header() {
                 key={link.to}
                 to={link.to}
                 className={cn(
-                  'relative px-3 py-2.5 text-sm font-medium transition-colors min-h-[44px] flex items-center',
+                  'relative px-2.5 xl:px-3 py-2.5 text-sm font-medium transition-colors min-h-[44px] items-center',
+                  'wideOnly' in link && link.wideOnly ? 'hidden xl:flex' : 'flex',
                   'after:absolute after:left-3 after:right-3 after:bottom-1 after:h-0.5 after:rounded-full after:bg-secondary-500 after:transition-transform after:origin-left',
                   isActive(link.to)
                     ? 'text-primary-900 after:scale-x-100'

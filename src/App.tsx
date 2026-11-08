@@ -32,6 +32,28 @@ const PropertyForm = lazy(() => import('@/pages/dashboard/PropertyForm').then(m 
 const AdminOverview = lazy(() => import('@/pages/admin/AdminOverview').then(m => ({ default: m.AdminOverview })));
 const AdminProperties = lazy(() => import('@/pages/admin/AdminProperties').then(m => ({ default: m.AdminProperties })));
 const AdminUsers = lazy(() => import('@/pages/admin/AdminUsers').then(m => ({ default: m.AdminUsers })));
+const Pricing = lazy(() => import('@/pages/public/Pricing').then(m => ({ default: m.Pricing })));
+const Services = lazy(() => import('@/pages/public/Services').then(m => ({ default: m.Services })));
+const ServiceDetail = lazy(() => import('@/pages/public/ServiceDetail').then(m => ({ default: m.ServiceDetail })));
+const Agencies = lazy(() => import('@/pages/public/Agencies').then(m => ({ default: m.Agencies })));
+const AgencyProfile = lazy(() => import('@/pages/public/AgencyProfile').then(m => ({ default: m.AgencyProfile })));
+const Leads = lazy(() => import('@/pages/dashboard/Leads').then(m => ({ default: m.Leads })));
+const Statistics = lazy(() => import('@/pages/dashboard/Statistics').then(m => ({ default: m.Statistics })));
+const Promotions = lazy(() => import('@/pages/dashboard/Promotions').then(m => ({ default: m.Promotions })));
+const Subscription = lazy(() => import('@/pages/dashboard/Subscription').then(m => ({ default: m.Subscription })));
+const Billing = lazy(() => import('@/pages/dashboard/Billing').then(m => ({ default: m.Billing })));
+const Checkout = lazy(() => import('@/pages/dashboard/Checkout').then(m => ({ default: m.Checkout })));
+const AgencySpace = lazy(() => import('@/pages/dashboard/AgencySpace').then(m => ({ default: m.AgencySpace })));
+const AgencyTeam = lazy(() => import('@/pages/dashboard/AgencyTeam').then(m => ({ default: m.AgencyTeam })));
+const AgencyPortfolio = lazy(() => import('@/pages/dashboard/AgencyPortfolio').then(m => ({ default: m.AgencyPortfolio })));
+const AdminAgencies = lazy(() => import('@/pages/admin/AdminAgencies').then(m => ({ default: m.AdminAgencies })));
+const AdminSubscriptions = lazy(() => import('@/pages/admin/AdminSubscriptions').then(m => ({ default: m.AdminSubscriptions })));
+const AdminPayments = lazy(() => import('@/pages/admin/AdminPayments').then(m => ({ default: m.AdminPayments })));
+const AdminPromotions = lazy(() => import('@/pages/admin/AdminPromotions').then(m => ({ default: m.AdminPromotions })));
+const AdminServices = lazy(() => import('@/pages/admin/AdminServices').then(m => ({ default: m.AdminServices })));
+const AdminAds = lazy(() => import('@/pages/admin/AdminAds').then(m => ({ default: m.AdminAds })));
+const AdminFinance = lazy(() => import('@/pages/admin/AdminFinance').then(m => ({ default: m.AdminFinance })));
+const AdminSettings = lazy(() => import('@/pages/admin/AdminSettings').then(m => ({ default: m.AdminSettings })));
 const AdminReports = lazy(() => import('@/pages/admin/AdminReports').then(m => ({ default: m.AdminReports })));
 
 function LoadingScreen() {
@@ -62,6 +84,11 @@ export default function App() {
           <Route path="/faq" element={<FAQ />} />
           <Route path="/confidentialite" element={<Privacy />} />
           <Route path="/conditions" element={<Terms />} />
+          <Route path="/tarifs" element={<Pricing />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/services/:slug" element={<ServiceDetail />} />
+          <Route path="/agences" element={<Agencies />} />
+          <Route path="/agences/:slug" element={<AgencyProfile />} />
         </Route>
 
         {/* Auth Routes */}
@@ -83,6 +110,15 @@ export default function App() {
             <Route path="/dashboard/notifications" element={<Notifications />} />
             <Route path="/dashboard/profil" element={<Profile />} />
             <Route path="/dashboard/settings" element={<Settings />} />
+            <Route path="/dashboard/prospects" element={<Leads />} />
+            <Route path="/dashboard/statistiques" element={<Statistics />} />
+            <Route path="/dashboard/promotions" element={<Promotions />} />
+            <Route path="/dashboard/abonnement" element={<Subscription />} />
+            <Route path="/dashboard/paiements" element={<Billing />} />
+            <Route path="/dashboard/paiement/:id" element={<Checkout />} />
+            <Route path="/dashboard/agence" element={<AgencySpace />} />
+            <Route path="/dashboard/agence/equipe" element={<AgencyTeam />} />
+            <Route path="/dashboard/agence/portefeuille" element={<AgencyPortfolio />} />
 
             {/* Admin Routes — role-gated in the UI, enforced by RLS in the database */}
             <Route element={<ProtectedRoute allowedRoles={['admin', 'super_admin']} />}>
@@ -90,6 +126,14 @@ export default function App() {
               <Route path="/admin/annonces" element={<AdminProperties />} />
               <Route path="/admin/utilisateurs" element={<AdminUsers />} />
               <Route path="/admin/signalements" element={<AdminReports />} />
+              <Route path="/admin/agences" element={<AdminAgencies />} />
+              <Route path="/admin/abonnements" element={<AdminSubscriptions />} />
+              <Route path="/admin/paiements" element={<AdminPayments />} />
+              <Route path="/admin/promotions" element={<AdminPromotions />} />
+              <Route path="/admin/services" element={<AdminServices />} />
+              <Route path="/admin/publicites" element={<AdminAds />} />
+              <Route path="/admin/rapports" element={<AdminFinance />} />
+              <Route path="/admin/parametres" element={<AdminSettings />} />
             </Route>
           </Route>
         </Route>

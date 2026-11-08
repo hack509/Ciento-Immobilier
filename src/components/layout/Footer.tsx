@@ -105,6 +105,9 @@ export function Footer() {
                 { to: '/vendre', label: 'Vendre' },
                 { to: '/airbnb', label: 'Courte durée' },
                 { to: '/agents', label: 'Agents' },
+                { to: '/agences', label: 'Agences' },
+                { to: '/services', label: 'Services immobiliers' },
+                { to: '/tarifs', label: 'Tarifs professionnels' },
                 { to: '/contact', label: 'Contact' },
               ].map((link) => (
                 <li key={link.to}>

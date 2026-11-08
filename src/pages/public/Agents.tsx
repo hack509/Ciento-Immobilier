@@ -1,4 +1,6 @@
 import { Star, Building2 } from 'lucide-react';
+import { PageHero } from '@/components/ui/PageHero';
+import { Head } from '@/components/seo/Head';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
@@ -10,12 +12,16 @@ export function Agents() {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <div className="bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Agents immobiliers</h1>
-          <p className="text-gray-500">Nos agents certifiés sont à votre service</p>
-        </div>
-      </div>
+      <Head title="Agents immobiliers" description="Les agents immobiliers certifiés de Ciento-Immobilier aux Gonaïves." url="/agents" />
+      <PageHero
+        eyebrow="Professionnels"
+        icon={Building2}
+        title="Agents"
+        highlight="immobiliers"
+        subtitle="Nos agents certifiés sont à votre service"
+        breadcrumbs={[{ label: 'Accueil', to: '/' }, { label: 'Agents' }]}
+        size="sm"
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {isLoading ? (

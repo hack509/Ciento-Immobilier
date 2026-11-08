@@ -2,6 +2,7 @@ import { supabase } from './supabase';
 import { storageService } from './storage.service';
 import type { Property, PropertyStatus, SearchFilters, PaginatedResponse, Amenity } from '@/types';
 import { ITEMS_PER_PAGE } from '@/lib/constants';
+import { sanitizeSearchTerm } from '@/lib/monetization';
 
 type PropertyWithStorageImages = {
   images?: { storage_path: string; url: string }[] | null;
@@ -43,8 +44,10 @@ class PropertiesService {
       .eq('is_published', true)
       .eq('status', 'active');
 
-    if (filters.query) {
-      query = query.or(`title.ilike.%${filters.query}%,description.ilike.%${filters.query}%`);
+    // Free text is sanitized: commas/parentheses would otherwise inject PostgREST filters.
+    const term = filters.query ? sanitizeSearchTerm(filters.query) : '';
+    if (term) {
+      query = query.or(`title.ilike.%${term}%,description.ilike.%${term}%`);
     }
     if (filters.city_id) query = query.eq('city_id', filters.city_id);
     if (filters.neighborhood_id) query = query.eq('neighborhood_id', filters.neighborhood_id);
@@ -54,8 +57,22 @@ class PropertiesService {
     if (filters.max_price) query = query.lte('price', filters.max_price);
     if (filters.bedrooms) query = query.gte('bedrooms', filters.bedrooms);
     if (filters.bathrooms) query = query.gte('bathrooms', filters.bathrooms);
+    // Surface: land uses the plot area, every other type the built area.
+    const areaColumn = filters.property_type === 'land' ? 'land_area' : 'building_area';
+    if (filters.min_area) query = query.gte(areaColumn, filters.min_area);
+    if (filters.max_area) query = query.lte(areaColumn, filters.max_area);
+    if (filters.availability === 'now') {
+      const today = new Date().toISOString().slice(0, 10);
+      query = query.or(`available_from.is.null,available_from.lte.${today}`);
+    }
 
-    const sortBy = filters.sort_by || 'created_at';
+    // Paid visibility first (sponsored, then premium), then the requested order.
+    query = query
+      .order('sponsored_until', { ascending: false, nullsFirst: false })
+      .order('premium_until', { ascending: false, nullsFirst: false });
+
+    const allowedSorts = ['created_at', 'price', 'views_count'];
+    const sortBy = allowedSorts.includes(filters.sort_by || '') ? filters.sort_by! : 'created_at';
     const sortOrder = filters.sort_order || 'desc';
     query = query.order(sortBy, { ascending: sortOrder === 'asc' });
 
@@ -81,7 +98,7 @@ class PropertiesService {
         *,
         owner:public_profiles!properties_owner_id_fkey(id, first_name, last_name, avatar_url),
         agent:agents!properties_agent_id_fkey(id, profile:public_profiles!agents_profile_id_fkey(id, first_name, last_name, avatar_url), license_number, experience_years),
-        agency:agencies!properties_agency_id_fkey(id, name, slug, logo_url, phone, email),
+        agency:agencies!properties_agency_id_fkey(id, name, slug, logo_url, phone, email, whatsapp, is_verified),
         category:categories!properties_category_id_fkey(id, name, slug),
         city:cities!properties_city_id_fkey(id, name, slug),
         neighborhood:neighborhoods!properties_neighborhood_id_fkey(id, name, slug),
@@ -121,6 +138,26 @@ class PropertiesService {
       .eq('status', 'active')
       .eq('is_featured', true)
       .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) throw error;
+    return await this.signImages(data || []) as Property[];
+  }
+
+  /** Listings with a running sponsored promotion (home page section). */
+  async getSponsored(limit: number = 6): Promise<Property[]> {
+    const { data, error } = await supabase
+      .from('properties')
+      .select(`
+        *,
+        city:cities!properties_city_id_fkey(id, name, slug),
+        neighborhood:neighborhoods!properties_neighborhood_id_fkey(id, name, slug),
+        images:property_images!property_images_property_id_fkey(url, storage_path, alt_text, is_primary, sort_order)
+      `)
+      .eq('is_published', true)
+      .eq('status', 'active')
+      .gt('sponsored_until', new Date().toISOString())
+      .order('sponsored_until', { ascending: false })
       .limit(limit);
 
     if (error) throw error;

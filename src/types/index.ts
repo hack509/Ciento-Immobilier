@@ -75,8 +75,13 @@ export interface Agency {
   rating_avg: number;
   rating_count: number;
   properties_count: number;
+  tagline?: string | null;
+  brand_color?: string | null;
+  team_intro?: string | null;
+  verification_requested_at?: string | null;
   created_at: string;
   updated_at: string;
+  city?: Pick<City, 'name' | 'slug'>;
 }
 
 export interface Agent {
@@ -136,6 +141,10 @@ export interface Property {
   is_published: boolean;
   published_at?: string;
   expires_at?: string;
+  available_from?: string | null;
+  sponsored_until?: string | null;
+  premium_until?: string | null;
+  premium_details?: Record<string, string>;
   created_at: string;
   updated_at: string;
   owner?: Profile;
@@ -359,6 +368,8 @@ export interface SearchFilters {
   bathrooms?: number;
   min_area?: number;
   max_area?: number;
+  /** 'now' = available today or without date */
+  availability?: 'now';
   amenities?: string[];
   sort_by?: string;
   sort_order?: 'asc' | 'desc';

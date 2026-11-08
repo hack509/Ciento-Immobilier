@@ -2,8 +2,10 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import {
   LayoutDashboard, Building2, Heart, MessageSquare, Bell, Settings, LogOut, User, Menu, X,
-  ShieldCheck, ClipboardCheck, Users, Flag, Plus, ArrowLeft,
+  ShieldCheck, ClipboardCheck, Users, Flag, Plus, ArrowLeft, Inbox, BarChart3, Megaphone, BadgeCheck,
+  Receipt, Building, Briefcase, CreditCard, MonitorPlay, LineChart, SlidersHorizontal, FolderKanban,
 } from 'lucide-react';
+import { useMyAgencies } from '@/hooks/useMarketplace';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUnreadCount } from '@/hooks/useNotifications';
 import { cn, getRoleLabel } from '@/lib/utils';
@@ -21,6 +23,11 @@ const ACCOUNT_LINKS: NavLink[] = [
   { icon: Building2, label: 'Mes annonces', to: '/dashboard/annonces' },
   { icon: Heart, label: 'Favoris', to: '/dashboard/favoris' },
   { icon: MessageSquare, label: 'Messages', to: '/dashboard/messages' },
+  { icon: Inbox, label: 'Contacts & prospects', to: '/dashboard/prospects' },
+  { icon: BarChart3, label: 'Statistiques', to: '/dashboard/statistiques' },
+  { icon: Megaphone, label: 'Promotions', to: '/dashboard/promotions' },
+  { icon: BadgeCheck, label: 'Abonnement', to: '/dashboard/abonnement' },
+  { icon: Receipt, label: 'Factures & paiements', to: '/dashboard/paiements' },
   { icon: Bell, label: 'Notifications', to: '/dashboard/notifications' },
   { icon: User, label: 'Profil', to: '/dashboard/profil' },
   { icon: Settings, label: 'Paramètres', to: '/dashboard/settings' },
@@ -31,6 +38,20 @@ const ADMIN_LINKS: NavLink[] = [
   { icon: ClipboardCheck, label: 'Modération', to: '/admin/annonces' },
   { icon: Users, label: 'Utilisateurs', to: '/admin/utilisateurs' },
   { icon: Flag, label: 'Signalements', to: '/admin/signalements' },
+  { icon: Building, label: 'Agences', to: '/admin/agences' },
+  { icon: BadgeCheck, label: 'Abonnements & tarifs', to: '/admin/abonnements' },
+  { icon: CreditCard, label: 'Paiements', to: '/admin/paiements' },
+  { icon: Megaphone, label: 'Promotions', to: '/admin/promotions' },
+  { icon: Briefcase, label: 'Services', to: '/admin/services' },
+  { icon: MonitorPlay, label: 'Publicités', to: '/admin/publicites' },
+  { icon: LineChart, label: 'Rapports financiers', to: '/admin/rapports' },
+  { icon: SlidersHorizontal, label: 'Paramètres & audit', to: '/admin/parametres' },
+];
+
+const AGENCY_LINKS: NavLink[] = [
+  { icon: Building, label: 'Profil de l’agence', to: '/dashboard/agence', exact: true },
+  { icon: FolderKanban, label: 'Portefeuille', to: '/dashboard/agence/portefeuille' },
+  { icon: Users, label: 'Équipe & agents', to: '/dashboard/agence/equipe' },
 ];
 
 function Avatar({ firstName, lastName, avatarUrl }: { firstName?: string; lastName?: string; avatarUrl?: string }) {
@@ -49,6 +70,8 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const navigate = useNavigate();
   const { data: unreadCount = 0 } = useUnreadCount();
   const isAdmin = profile?.role === 'admin' || profile?.role === 'super_admin';
+  const { data: agencies } = useMyAgencies();
+  const agency = agencies?.[0];
 
   const isActive = (link: NavLink) =>
     link.exact ? location.pathname === link.to : location.pathname.startsWith(link.to);
@@ -110,6 +133,16 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         <div>
           <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">Mon compte</p>
           <div className="space-y-1">{ACCOUNT_LINKS.map(renderLink)}</div>
+        </div>
+        <div>
+          <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+            {agency ? `Agence · ${agency.agency.name}` : 'Espace professionnel'}
+          </p>
+          <div className="space-y-1">
+            {agency
+              ? AGENCY_LINKS.map(renderLink)
+              : renderLink({ icon: Building, label: 'Créer mon agence', to: '/dashboard/agence', exact: true })}
+          </div>
         </div>
         {isAdmin && (
           <div>

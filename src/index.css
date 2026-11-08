@@ -25,6 +25,11 @@
   --color-secondary-800: #6B4C00;
   --color-secondary-900: #4A3500;
 
+  /* Official logo colours (brand charter) — used for heroes, badges and accents */
+  --color-brand-blue: #1D3E91;
+  --color-brand-blue-dark: #142C69;
+  --color-brand-yellow: #F4D000;
+
   --color-success-50: #F0FDF4;
   --color-success-100: #DCFCE7;
   --color-success-500: #22C55E;
@@ -114,6 +119,15 @@
     background-position: right 0.75rem center;
     background-size: 1rem;
     padding-right: 2.5rem;
+  }
+
+  /* Subtle architectural grid used behind page heroes */
+  .hero-grid {
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse at 70% 30%, black 20%, transparent 75%);
   }
 
   /* Small uppercase label above section titles */
