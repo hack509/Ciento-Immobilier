@@ -72,7 +72,7 @@ export function Billing() {
         {invoice && (
           <div className="space-y-4 text-sm print:text-black" id="invoice-print">
             <div className="flex items-start justify-between">
-              <img src="/logo.jpg" alt={APP_NAME} className="h-12 w-auto" />
+              <img src="/logo-320.webp" alt={APP_NAME} className="h-12 w-auto" />
               <div className="text-right text-xs text-gray-500">
                 <p className="font-semibold text-primary-900">{invoice.number}</p>
                 <p>Émise le {formatDate(invoice.issued_at)}</p>

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { MapPin, BedDouble, Bath, Maximize, Building, Calendar, Eye, Heart, ChevronRight, CalendarCheck, Crown } from 'lucide-react';
+import { MapPin, BedDouble, Bath, Maximize, Building, Calendar, Eye, ChevronRight, CalendarCheck, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
@@ -12,36 +12,11 @@ import { InquiryForm } from '@/components/property/InquiryForm';
 import { ShareButton } from '@/components/property/ShareButton';
 import { PremiumBadge, SponsoredBadge, VerifiedBadge } from '@/components/ui/PromoBadges';
 import { AdSlot } from '@/components/ads/AdSlot';
+import { PropertyGallery } from '@/components/media/PropertyGallery';
+import { FavoriteButton } from '@/components/property/FavoriteButton';
 import { isListingAvailable, isPremium, isSponsored } from '@/lib/monetization';
-import type { Property } from '@/types';
-
-/** schema.org description of a listing (only emitted for available listings). */
-function buildJsonLd(property: Property, url: string, image?: string) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'RealEstateListing',
-    name: property.title,
-    description: property.description.slice(0, 500),
-    url,
-    datePosted: property.published_at || property.created_at,
-    image: image ? [image] : undefined,
-    offers: {
-      '@type': 'Offer',
-      price: property.price,
-      priceCurrency: property.price_currency,
-      availability: 'https://schema.org/InStock',
-    },
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: property.city?.name,
-      addressRegion: property.neighborhood?.name,
-      addressCountry: 'HT',
-    },
-    ...(property.latitude && property.longitude
-      ? { geo: { '@type': 'GeoCoordinates', latitude: property.latitude, longitude: property.longitude } }
-      : {}),
-  };
-}
+import { breadcrumbJsonLd, listingJsonLd, propertySeo } from '@/lib/seo-core';
+import { getEnv } from '@/lib/env';
 
 export function PropertyDetail() {
   const { propertySlug } = useParams<{ propertySlug: string }>();
@@ -77,27 +52,40 @@ export function PropertyDetail() {
     );
   }
 
-  const primaryImage = property.images?.find((img) => img.is_primary) || property.images?.[0];
-  const otherImages = property.images?.filter((img) => img !== primaryImage) || [];
+  // Main image first, then the owner's order.
+  const orderedImages = [...(property.images || [])].sort((a, b) => Number(b.is_primary) - Number(a.is_primary) || a.sort_order - b.sort_order);
+  const primaryImage = orderedImages[0];
   const premium = isPremium(property);
   const sponsored = isSponsored(property);
   const available = isListingAvailable(property);
   const path = generatePropertyUrl(property as { slug: string; city?: { slug: string } });
+  const siteUrl = getEnv().appUrl;
   const absoluteUrl = `${window.location.origin}${path}`;
-  // Premium listings get the enhanced gallery (more thumbnails).
-  const thumbnails = otherImages.slice(0, premium ? 8 : 4);
+  const seo = propertySeo(property);
+  // Premium listings get the enhanced gallery (every photo); standard listings show 8.
+  const galleryImages = premium ? orderedImages : orderedImages.slice(0, 8);
   const premiumDetails = Object.entries(property.premium_details || {}).filter(([, v]) => Boolean(v));
   const availableFrom = property.available_from && new Date(property.available_from) > new Date() ? property.available_from : null;
 
   return (
     <>
       <Head
-        title={property.title}
-        description={`${property.title} — ${getPropertyTypeLabel(property.property_type)} à ${property.city?.name || 'Gonaïves'}. ${property.bedrooms} chambres, ${property.bathrooms} salles de bain. ${formatPrice(property.price, property.price_currency)}.`}
+        title={seo.title}
+        description={seo.description}
         image={primaryImage?.url}
         url={path}
         noindex={!available}
-        jsonLd={available ? buildJsonLd(property, absoluteUrl, primaryImage?.url) : undefined}
+        jsonLd={available ? [
+          listingJsonLd(siteUrl, {
+            ...property, citySlug: property.city?.slug ?? 'inconnu',
+            images: orderedImages.map((i) => i.url).filter((u) => /^https:/.test(u)),
+          }),
+          breadcrumbJsonLd(siteUrl, [
+            { name: 'Accueil', path: '/' },
+            { name: 'Annonces', path: '/annonces' },
+            { name: property.title, path },
+          ]),
+        ] : undefined}
       />
       <div className="bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -114,48 +102,24 @@ export function PropertyDetail() {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Gallery */}
-            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-              {primaryImage ? (
-                <div className="aspect-[16/9] relative">
-                  <img
-                    src={primaryImage.url}
-                    alt={primaryImage.alt_text || property.title}
-                    className="w-full h-full object-cover"
-                    loading="eager"
-                    decoding="async"
-                  />
-                  <div className="absolute top-4 left-4 flex gap-2">
-                    <Badge variant={property.listing_type === 'rent' ? 'secondary' : 'primary'}>
-                      {getListingTypeLabel(property.listing_type)}
-                    </Badge>
-                    {sponsored && <SponsoredBadge />}
-                    {premium && <PremiumBadge />}
-                    {property.is_featured && (
-                      <Badge variant="warning">En vedette</Badge>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <div className="aspect-[16/9] bg-gray-200 flex items-center justify-center">
-                  <span className="text-gray-400">Aucune image</span>
-                </div>
-              )}
-
-              {!available && (
-                <p className="bg-warning-50 px-4 py-2 text-sm font-medium text-warning-700">
-                  Cette annonce n’est plus disponible.
-                </p>
-              )}
-              {thumbnails.length > 0 && (
-                <div className="grid grid-cols-4 gap-2 p-2">
-                  {thumbnails.map((img) => (
-                    <div key={img.id} className="aspect-square rounded-lg overflow-hidden bg-gray-100">
-                      <img src={img.url} alt={img.alt_text || ''} className="w-full h-full object-cover" loading="lazy" decoding="async" />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <PropertyGallery
+              images={galleryImages}
+              videos={property.videos || []}
+              title={property.title}
+              badges={<>
+                <Badge variant={property.listing_type === 'rent' ? 'secondary' : 'primary'}>
+                  {getListingTypeLabel(property.listing_type)}
+                </Badge>
+                {sponsored && <SponsoredBadge />}
+                {premium && <PremiumBadge />}
+                {property.is_featured && <Badge variant="warning">En vedette</Badge>}
+              </>}
+            />
+            {!available && (
+              <p className="rounded-xl bg-warning-50 px-4 py-2 text-sm font-medium text-warning-700">
+                Cette annonce n’est plus disponible.
+              </p>
+            )}
 
             {/* Info */}
             <div className="bg-white rounded-2xl border border-gray-200 p-6 lg:p-8">
@@ -291,9 +255,7 @@ export function PropertyDetail() {
               <div className="space-y-3">
                 <PropertyContactActions property={property} />
                 <div className="grid grid-cols-2 gap-3">
-                  <Button variant="ghost" className="w-full" icon={<Heart className="w-4 h-4" />}>
-                    Favoris
-                  </Button>
+                  <FavoriteButton propertyId={property.id} />
                   <ShareButton title={property.title} url={absoluteUrl} />
                 </div>
               </div>

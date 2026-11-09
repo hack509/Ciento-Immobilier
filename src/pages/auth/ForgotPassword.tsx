@@ -4,6 +4,7 @@ import { Mail, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useAuth } from '@/contexts/AuthContext';
+import { NoIndex } from '@/components/seo/Head';
 
 export function ForgotPassword() {
   const { resetPassword } = useAuth();
@@ -51,13 +52,14 @@ export function ForgotPassword() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+      <NoIndex />
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link to="/auth/connexion" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-6">
             <ArrowLeft className="w-4 h-4" />
             Retour
           </Link>
-          <img src="/logo.jpg" alt="Ciento-Immobilier" className="h-12 w-auto rounded-xl object-contain mx-auto mb-4" />
+          <img src="/logo-320.webp" alt="Ciento-Immobilier" className="h-12 w-auto rounded-xl object-contain mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-primary-800">Mot de passe oublié</h1>
           <p className="text-gray-500 mt-1">Entrez votre email pour réinitialiser votre mot de passe</p>
         </div>

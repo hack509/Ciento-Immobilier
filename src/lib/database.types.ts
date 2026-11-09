@@ -44,6 +44,14 @@ export interface Database {
       submit_property_inquiry: MarketplaceRpc;
       get_listing_stats: MarketplaceRpc;
       get_my_quota: MarketplaceRpc;
+      report_property_media: MarketplaceRpc;
+      admin_moderate_media: MarketplaceRpc;
+      admin_newsletter_stats: MarketplaceRpc;
+      admin_start_newsletter_campaign: MarketplaceRpc;
+      admin_inbox_counts: MarketplaceRpc;
+      submit_contact_message: MarketplaceRpc;
+      media_limit: MarketplaceRpc;
+      is_admin: MarketplaceRpc;
       unsubscribe_newsletter: {
         Args: { p_token: string };
         Returns: boolean;

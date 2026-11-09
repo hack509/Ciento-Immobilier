@@ -7,6 +7,7 @@ import { PageHeader, Panel } from '@/components/dashboard/DashboardUI';
 import { useAuth } from '@/contexts/AuthContext';
 import { authService } from '@/services/auth.service';
 import { getRoleLabel } from '@/lib/utils';
+import { AvatarUploader } from '@/components/profile/AvatarUploader';
 
 const MIN_PASSWORD_LENGTH = 8;
 
@@ -88,6 +89,10 @@ export function Settings() {
       <PageHeader title="Paramètres" subtitle="Sécurité et informations de votre compte." />
 
       <div className="space-y-6">
+        <Panel title="Photo de profil">
+          <div className="p-5"><AvatarUploader /></div>
+        </Panel>
+
         <Panel title="Compte">
           <dl className="divide-y divide-gray-100">
             {[

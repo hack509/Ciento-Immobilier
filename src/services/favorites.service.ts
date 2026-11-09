@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { storageService } from './storage.service';
+import { signImageRows } from './media.service';
 import type { Favorite } from '@/types';
 
 class FavoritesService {
@@ -13,28 +13,21 @@ class FavoritesService {
         property:properties(
           *,
           city:cities!properties_city_id_fkey(id, name, slug),
-          images:property_images!property_images_property_id_fkey(url, storage_path, alt_text, is_primary, sort_order)
+          images:property_images!property_images_property_id_fkey(url, storage_path, thumbnail_path, source, alt_text, is_primary, sort_order)
         )
       `)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return Promise.all(
-      ((data || []) as Favorite[]).map(async (favorite) => ({
-        ...favorite,
-        property: favorite.property
-          ? {
-              ...favorite.property,
-              images: await Promise.all(
-                (favorite.property.images || []).map(async (image) => ({
-                  ...image,
-                  url: await storageService.getSignedUrl(image.storage_path),
-                }))
-              ),
-            }
-          : undefined,
-      }))
-    );
+    const favorites = (data || []) as Favorite[];
+    const signed = await signImageRows(favorites.flatMap((f) => f.property?.images || []));
+    let index = 0;
+    return favorites.map((favorite) => ({
+      ...favorite,
+      property: favorite.property
+        ? { ...favorite.property, images: (favorite.property.images || []).map(() => signed[index++]) }
+        : undefined,
+    }));
   }
 
   async check(propertyId: string): Promise<boolean> {
@@ -49,9 +42,12 @@ class FavoritesService {
   }
 
   async add(propertyId: string): Promise<void> {
+    // user_id is required (NOT NULL + RLS check user_id = auth.uid()).
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Connectez-vous pour ajouter des favoris.');
     const { error } = await supabase
       .from('favorites')
-      .insert({ property_id: propertyId });
+      .insert({ property_id: propertyId, user_id: user.id });
 
     if (error) throw error;
   }

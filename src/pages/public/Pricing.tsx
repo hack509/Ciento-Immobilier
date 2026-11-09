@@ -157,7 +157,7 @@ export function Pricing() {
                       ))}
                     </ul>
                   ) : (
-                    <p className="mt-5 text-sm text-gray-400">Tarifs communiqués sur demande.</p>
+                    <p className="mt-5 text-sm text-gray-600">Tarifs communiqués sur demande.</p>
                   )}
                 </article>
               );

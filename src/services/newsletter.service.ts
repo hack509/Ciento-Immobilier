@@ -1,18 +1,25 @@
 import { supabase } from './supabase';
 
 export class NewsletterService {
-  async subscribe(email: string): Promise<{ success: boolean; message: string }> {
+  async subscribe(email: string, source = 'website'): Promise<{ success: boolean; message: string }> {
+    const clean = email.toLowerCase().trim();
+    if (clean.length > 254 || !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(clean)) {
+      return { success: false, message: 'Adresse e-mail invalide.' };
+    }
     const { error } = await supabase.functions.invoke('newsletter-subscribe', {
-      body: { email: email.toLowerCase().trim() },
+      body: { email: clean, source },
     });
 
     if (error) {
-      return { success: false, message: 'Une erreur est survenue. Veuillez réessayer.' };
+      const context = (error as { context?: Response }).context;
+      const payload = context && typeof context.json === 'function'
+        ? await context.json().catch(() => null) as { error?: string } | null : null;
+      return { success: false, message: payload?.error || 'Une erreur est survenue. Veuillez réessayer.' };
     }
 
     return {
       success: true,
-      message: 'Vérifiez votre boîte e-mail pour confirmer ou gérer votre inscription.',
+      message: 'Presque terminé ! Confirmez votre inscription grâce au lien envoyé par e-mail.',
     };
   }
 

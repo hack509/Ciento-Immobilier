@@ -5,6 +5,10 @@ CREATE ROLE authenticated NOLOGIN;
 CREATE ROLE service_role NOLOGIN BYPASSRLS;
 CREATE ROLE supabase_admin NOLOGIN;
 
+-- Supabase installs pgcrypto in the "extensions" schema (used by migration 014).
+CREATE SCHEMA extensions;
+CREATE EXTENSION pgcrypto WITH SCHEMA extensions;
+
 CREATE SCHEMA auth;
 CREATE TABLE auth.users (
   id UUID PRIMARY KEY,
@@ -24,7 +28,8 @@ CREATE TABLE storage.buckets (
   id TEXT PRIMARY KEY, name TEXT, public BOOLEAN, file_size_limit BIGINT, allowed_mime_types TEXT[]
 );
 CREATE TABLE storage.objects (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(), bucket_id TEXT, name TEXT, owner UUID
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(), bucket_id TEXT, name TEXT, owner UUID,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
 CREATE FUNCTION storage.foldername(name TEXT) RETURNS TEXT[] LANGUAGE sql IMMUTABLE AS $$

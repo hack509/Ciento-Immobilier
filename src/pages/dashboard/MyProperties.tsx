@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/Badge';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Modal } from '@/components/ui/Modal';
+import { useToast } from '@/components/ui/toast-context';
+import { errorMessage } from '@/lib/monetization';
 import { Pagination } from '@/components/ui/Pagination';
 import { useOwnProperties, useDeleteProperty } from '@/hooks/useProperties';
 import { useAuth } from '@/contexts/AuthContext';
@@ -17,12 +19,19 @@ export function MyProperties() {
   const [page, setPage] = useState(1);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const deleteProperty = useDeleteProperty();
+  const toast = useToast();
 
   const { data, isLoading } = useOwnProperties(user?.id, page);
 
   const handleDelete = async () => {
-    if (!deleteId) return;
-    await deleteProperty.mutateAsync(deleteId);
+    if (!deleteId || deleteProperty.isPending) return;
+    try {
+      await deleteProperty.mutateAsync(deleteId);
+      toast.success('Annonce supprimée.');
+    } catch (err) {
+      toast.error(errorMessage(err, 'Suppression impossible.'));
+      return;
+    }
     setDeleteId(null);
   };
 

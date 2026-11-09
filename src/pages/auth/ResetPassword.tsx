@@ -4,6 +4,7 @@ import { Lock, Eye, EyeOff, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { supabase } from '@/services/supabase';
+import { NoIndex } from '@/components/seo/Head';
 
 export function ResetPassword() {
   const navigate = useNavigate();
@@ -106,10 +107,11 @@ export function ResetPassword() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
+      <NoIndex />
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 mb-6">
-            <img src="/logo.jpg" alt="Ciento-Immobilier" className="h-12 w-auto rounded-xl object-contain" />
+            <img src="/logo-320.webp" alt="Ciento-Immobilier" className="h-12 w-auto rounded-xl object-contain" />
           </Link>
           <h1 className="text-2xl font-bold text-primary-800">Nouveau mot de passe</h1>
           <p className="text-gray-500 mt-1">Choisissez un nouveau mot de passe sécurisé</p>

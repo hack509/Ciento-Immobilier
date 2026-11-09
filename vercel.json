@@ -6,6 +6,22 @@
   "devCommand": "npm run dev",
   "rewrites": [
     {
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap"
+    },
+    {
+      "source": "/annonces/:city/:slug",
+      "destination": "/api/render?type=property&city=:city&slug=:slug"
+    },
+    {
+      "source": "/agences/:slug",
+      "destination": "/api/render?type=agency&slug=:slug"
+    },
+    {
+      "source": "/services/:slug",
+      "destination": "/api/render?type=service&slug=:slug"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
@@ -38,6 +54,24 @@
         {
           "key": "Referrer-Policy",
           "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    },
+    {
+      "source": "/(dashboard|admin|auth)(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/(og-image.jpg|logo.jpg|favicon.svg|hero.webp|hero-sm.webp)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800"
         }
       ]
     }

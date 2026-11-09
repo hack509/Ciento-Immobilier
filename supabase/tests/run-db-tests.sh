@@ -31,15 +31,17 @@ for migration in "$ROOT"/supabase/migrations/*.sql; do
 done
 
 # Re-applying the new migrations must be safe (idempotent DDL).
-for migration in "$ROOT"/supabase/migrations/01[6-8]_*.sql; do
+for migration in "$ROOT"/supabase/migrations/01[6-9]_*.sql; do
   run_sql "$migration" >/dev/null 2>&1
 done
-echo "→ migrations 016-018 re-applied (idempotence OK)"
+echo "→ migrations 016-019 re-applied (idempotence OK)"
 
-run_sql "$ROOT/supabase/tests/sql/marketplace_security_test.sql" 2>&1 | grep -E "PASS|FAIL|ERROR|PASSED|CONTEXT|LINE"
+for test in "$ROOT"/supabase/tests/sql/*_test.sql; do
+  run_sql "$test" 2>&1 | grep -E "PASS|FAIL|ERROR|PASSED|CONTEXT|LINE"
+done
 
 # Rollbacks must apply cleanly, newest first.
 for rollback in $(ls -r "$ROOT"/supabase/rollbacks/*.down.sql); do
   run_sql "$rollback" >/dev/null
 done
-echo "→ rollbacks 018-016 applied cleanly"
+echo "→ rollbacks applied cleanly (newest first)"

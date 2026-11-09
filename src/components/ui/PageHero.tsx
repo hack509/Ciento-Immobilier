@@ -2,6 +2,9 @@ import type { ComponentType, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Helmet } from 'react-helmet-async';
+import { breadcrumbJsonLd } from '@/lib/seo-core';
+import { getEnv } from '@/lib/env';
 
 interface Crumb {
   label: string;
@@ -60,6 +63,13 @@ export function PageHero({
         overlap && 'pb-20 sm:pb-24',
         centered && 'text-center',
       )}>
+        {breadcrumbs && breadcrumbs.length > 1 && (
+          <Helmet>
+            <script type="application/ld+json">
+              {JSON.stringify(breadcrumbJsonLd(getEnv().appUrl, breadcrumbs.map((c) => ({ name: c.label, path: c.to ?? (typeof window !== 'undefined' ? window.location.pathname : undefined) }))))}
+            </script>
+          </Helmet>
+        )}
         {breadcrumbs && breadcrumbs.length > 0 && (
           <nav aria-label="Fil d’Ariane" className={cn('mb-5 flex flex-wrap items-center gap-1.5 text-xs text-primary-200', centered && 'justify-center')}>
             {breadcrumbs.map((crumb, i) => (

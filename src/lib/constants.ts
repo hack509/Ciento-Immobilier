@@ -66,3 +66,10 @@ export const BEDROOM_OPTIONS = [
   { value: 4, label: '4+' },
   { value: 5, label: '5+' },
 ] as const;
+
+/** Social profiles (shown only when configured — no dead "#" links). Also used in Organization JSON-LD. */
+export const SOCIAL_LINKS = {
+  facebook: (import.meta.env.VITE_FACEBOOK_URL as string | undefined) || '',
+  instagram: (import.meta.env.VITE_INSTAGRAM_URL as string | undefined) || '',
+  whatsapp: `https://wa.me/${CONTACT_PHONES[0].number.replace(/\D/g, '')}`,
+};

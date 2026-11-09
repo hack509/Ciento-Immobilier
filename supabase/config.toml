@@ -9,3 +9,17 @@ verify_jwt = false
 
 [functions.payments]
 verify_jwt = true
+
+[functions.media]
+verify_jwt = true
+
+[functions.admin-mail]
+verify_jwt = true
+
+# Called by e-mail providers (signature / secret verified in code).
+[functions.email-webhook]
+verify_jwt = false
+
+# Called by a Supabase Database Webhook (x-webhook-secret verified in code).
+[functions.contact-notify]
+verify_jwt = false

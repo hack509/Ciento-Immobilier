@@ -9,7 +9,8 @@ import { Input } from '@/components/ui/Input';
 import { TextArea } from '@/components/ui/TextArea';
 import { Select } from '@/components/ui/Select';
 import { Switch } from '@/components/ui/Switch';
-import { ImageUpload } from '@/components/ui/ImageUpload';
+import { MediaManager } from '@/components/media/MediaManager';
+import { useToast } from '@/components/ui/toast-context';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Modal } from '@/components/ui/Modal';
 import { useAuth } from '@/contexts/AuthContext';
@@ -19,12 +20,10 @@ import {
   useDeleteProperty,
   usePropertyAmenities,
 } from '@/hooks/useProperties';
-import { useUploadPropertyImage, useDeletePropertyImage } from '@/hooks/usePropertyMutations';
 import { propertiesService } from '@/services/properties.service';
-import { storageService } from '@/services/storage.service';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { PROPERTY_TYPES, LISTING_TYPES } from '@/lib/constants';
-import type { Property, PropertyImage, Amenity } from '@/types';
+import type { Property, Amenity } from '@/types';
 import { errorMessage } from '@/lib/monetization';
 
 const propertySchema = z.object({
@@ -59,6 +58,7 @@ export function PropertyForm() {
   const { profile } = useAuth();
   const queryClient = useQueryClient();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const toast = useToast();
   const [saveError, setSaveError] = useState<{ message: string; quota: boolean } | null>(null);
   // New listing published for an agency (portfolio page passes ?agence=<id>); verified by the database.
   const [searchParams] = useSearchParams();
@@ -67,8 +67,6 @@ export function PropertyForm() {
   const createProperty = useCreateProperty();
   const updateProperty = useUpdateProperty();
   const deleteProperty = useDeleteProperty();
-  const uploadImage = useUploadPropertyImage();
-  const deleteImage = useDeletePropertyImage();
   const { data: amenities } = usePropertyAmenities();
 
   const { data: existingProperty, isLoading: isLoadingProperty } = useQuery({
@@ -77,14 +75,7 @@ export function PropertyForm() {
     enabled: isEdit,
   });
 
-  const { data: existingImages } = useQuery({
-    queryKey: ['property-images', id],
-    queryFn: () => storageService.getPropertyImages(id!),
-    enabled: isEdit,
-  });
-
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
-  const [images, setImages] = useState<PropertyImage[]>([]);
 
   const {
     register,
@@ -141,12 +132,6 @@ export function PropertyForm() {
     }
   }, [existingProperty, reset]);
 
-  useEffect(() => {
-    if (existingImages) {
-      setImages(existingImages as PropertyImage[]);
-    }
-  }, [existingImages]);
-
   const onSubmit = async (data: PropertyFormData) => {
     try {
       setSaveError(null);
@@ -177,44 +162,18 @@ export function PropertyForm() {
       }
 
       queryClient.invalidateQueries({ queryKey: ['properties'] });
-      navigate('/dashboard/annonces');
+      if (isEdit) {
+        toast.success('Annonce enregistrée.');
+        navigate('/dashboard/annonces');
+      } else {
+        toast.success('Annonce créée. Ajoutez maintenant vos photos et vidéos.');
+        navigate(`/dashboard/annonces/${propertyId}/modifier#medias`);
+      }
     } catch (err) {
       console.error('Property save error:', err);
       const message = errorMessage(err, 'Impossible d’enregistrer l’annonce.');
       setSaveError({ message, quota: /limite/i.test(message) });
     }
-  };
-
-  const handleImageUpload = async (files: File[]) => {
-    if (!id && !isEdit) return;
-    for (const file of files) {
-      await uploadImage.mutateAsync({
-        propertyId: id!,
-        file,
-        isPrimary: images.length === 0,
-      });
-    }
-    const updatedImages = await storageService.getPropertyImages(id!);
-    setImages(updatedImages as PropertyImage[]);
-  };
-
-  const handleImageRemove = async (imageId: string) => {
-    const image = images.find((img) => img.id === imageId);
-    if (!image) return;
-    await deleteImage.mutateAsync({ imageId, storagePath: image.storage_path });
-    setImages((prev) => prev.filter((img) => img.id !== imageId));
-  };
-
-  const handleSetPrimary = async (imageId: string) => {
-    const updated = images.map((img) => ({
-      id: img.id,
-      sort_order: img.sort_order,
-      is_primary: img.id === imageId,
-    }));
-    await storageService.reorderImages(updated);
-    setImages((prev) =>
-      prev.map((img) => ({ ...img, is_primary: img.id === imageId }))
-    );
   };
 
   const handleDelete = async () => {
@@ -230,6 +189,13 @@ export function PropertyForm() {
         : [...prev, amenityId]
     );
   };
+
+  // After creation the user lands on #medias: scroll there once the form is rendered.
+  useEffect(() => {
+    if (!isLoadingProperty && window.location.hash === '#medias') {
+      requestAnimationFrame(() => document.getElementById('medias')?.scrollIntoView({ behavior: 'smooth' }));
+    }
+  }, [isLoadingProperty]);
 
   if (isEdit && isLoadingProperty) {
     return <LoadingSpinner size="lg" text="Chargement de l'annonce..." className="py-20" />;
@@ -387,20 +353,15 @@ export function PropertyForm() {
           </div>
         </section>
 
-        {/* Images */}
-        <section className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Photos</h2>
-          {isEdit ? (
-            <ImageUpload
-              images={images}
-              onUpload={handleImageUpload}
-              onRemove={handleImageRemove}
-              onSetPrimary={handleSetPrimary}
-              isLoading={uploadImage.isPending}
-            />
+        {/* Media gallery */}
+        <section id="medias" className="bg-white rounded-xl border border-gray-200 p-6 scroll-mt-24">
+          <h2 className="text-lg font-semibold text-gray-900 mb-1">Galerie de médias</h2>
+          <p className="mb-4 text-sm text-gray-500">Photos et vidéos de votre bien. Les photos sont optimisées pour le web automatiquement.</p>
+          {isEdit && id ? (
+            <MediaManager propertyId={id} />
           ) : (
             <p className="text-sm text-gray-500 bg-gray-50 rounded-lg p-4">
-              Enregistrez l'annonce puis ajoutez des photos depuis la page de modification.
+              Enregistrez l'annonce : vous serez redirigé vers cette section pour ajouter vos photos et vidéos.
             </p>
           )}
         </section>

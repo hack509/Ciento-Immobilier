@@ -1,78 +1,30 @@
 import { supabase } from './supabase';
+import { mediaService, signImageRows } from './media.service';
 import type { PropertyImage } from '@/types';
 
 const BUCKET = 'property-images';
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
+/**
+ * Kept for compatibility with existing callers. Uploads now go through the
+ * media Edge Function (server-side format check, WebP optimisation, thumbnails).
+ */
 class StorageService {
   async getSignedUrl(storagePath: string): Promise<string> {
-    const { data, error } = await supabase.storage
-      .from(BUCKET)
-      .createSignedUrl(storagePath, 60 * 60);
-
+    const { data, error } = await supabase.storage.from(BUCKET).createSignedUrl(storagePath, 60 * 60);
     if (error) throw error;
     return data.signedUrl;
   }
 
-  async uploadPropertyImage(
-    propertyId: string,
-    file: File,
-    isPrimary: boolean = false,
-    altText?: string
-  ) {
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      throw new Error('Type de fichier non supporté. Utilisez JPEG, PNG, WebP ou GIF.');
-    }
-    if (file.size > MAX_FILE_SIZE) {
-      throw new Error('Le fichier est trop volumineux. Maximum : 5 Mo.');
-    }
-
-    const ext = file.name.split('.').pop();
-    const path = `properties/${propertyId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from(BUCKET)
-      .upload(path, file, { contentType: file.type, upsert: false });
-
-    if (uploadError) throw uploadError;
-
-    const signedUrl = await this.getSignedUrl(path);
-
-    const { data: imageData, error: insertError } = await supabase
-      .from('property_images')
-      .insert({
-        property_id: propertyId,
-        url: signedUrl,
-        storage_path: path,
-        alt_text: altText || file.name,
-        is_primary: isPrimary,
-        sort_order: 0,
-      })
-      .select()
-      .single();
-
-    if (insertError) throw insertError;
-    return imageData;
+  async uploadPropertyImage(propertyId: string, file: File, _isPrimary: boolean = false, _altText?: string) {
+    return mediaService.uploadPropertyImage(propertyId, file);
   }
 
-  async deletePropertyImage(imageId: string, storagePath: string): Promise<void> {
-    await supabase.storage.from(BUCKET).remove([storagePath]);
-    const { error } = await supabase
-      .from('property_images')
-      .delete()
-      .eq('id', imageId);
-    if (error) throw error;
+  async deletePropertyImage(imageId: string, _storagePath?: string | null): Promise<void> {
+    await mediaService.deleteMedia('image', imageId);
   }
 
   async reorderImages(images: { id: string; sort_order: number; is_primary: boolean }[]): Promise<void> {
-    const updates = images.map((img) =>
-      supabase
-        .from('property_images')
-        .update({ sort_order: img.sort_order, is_primary: img.is_primary })
-        .eq('id', img.id)
-    );
-    await Promise.all(updates);
+    await mediaService.saveImageOrder(images);
   }
 
   async getPropertyImages(propertyId: string) {
@@ -83,12 +35,7 @@ class StorageService {
       .order('sort_order');
 
     if (error) throw error;
-    return Promise.all(
-      ((data || []) as PropertyImage[]).map(async (image) => ({
-        ...image,
-        url: await this.getSignedUrl(image.storage_path),
-      }))
-    );
+    return signImageRows((data || []) as PropertyImage[]);
   }
 }
 

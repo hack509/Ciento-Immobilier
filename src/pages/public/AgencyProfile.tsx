@@ -6,6 +6,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { PropertyCard } from '@/components/ui/PropertyCard';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { VerifiedBadge } from '@/components/ui/PromoBadges';
+import { AgencyContactForm } from '@/components/agency/AgencyContactForm';
 import { usePublicAgency, usePublicAgencyDetails } from '@/hooks/useMarketplace';
 
 export function AgencyProfile() {
@@ -122,6 +123,13 @@ export function AgencyProfile() {
                 {agency.address && <li className="flex gap-2"><MapPin className="h-4 w-4 text-brand-blue" />{agency.address}</li>}
               </ul>
             </section>
+
+            {agency.is_verified && (
+              <section className="rounded-2xl bg-white p-6 shadow-card">
+                <h2 className="mb-4 text-lg font-bold text-primary-900">Écrire à l’agence</h2>
+                <AgencyContactForm agencyId={agency.id} agencyName={agency.name} />
+              </section>
+            )}
 
             {team.data && team.data.length > 0 && (
               <section className="rounded-2xl bg-white p-6 shadow-card">
