@@ -5,11 +5,11 @@ export function useSubscribeNewsletter() {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
 
-  const subscribe = async (email: string) => {
+  const subscribe = async (email: string, source = 'footer') => {
     setIsLoading(true);
     setResult(null);
     try {
-      const res = await newsletterService.subscribe(email);
+      const res = await newsletterService.subscribe(email, source);
       setResult(res);
       return res;
     } finally {

@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import { PublicLayout } from '@/components/layout/PublicLayout';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { Analytics } from '@/components/seo/Analytics';
 
 const Home = lazy(() => import('@/pages/public/Home').then(m => ({ default: m.Home })));
 const Properties = lazy(() => import('@/pages/public/Properties').then(m => ({ default: m.Properties })));
@@ -32,6 +33,7 @@ const PropertyForm = lazy(() => import('@/pages/dashboard/PropertyForm').then(m 
 const AdminOverview = lazy(() => import('@/pages/admin/AdminOverview').then(m => ({ default: m.AdminOverview })));
 const AdminProperties = lazy(() => import('@/pages/admin/AdminProperties').then(m => ({ default: m.AdminProperties })));
 const AdminUsers = lazy(() => import('@/pages/admin/AdminUsers').then(m => ({ default: m.AdminUsers })));
+const PropertyAlias = lazy(() => import('@/pages/public/PropertyAlias').then(m => ({ default: m.PropertyAlias })));
 const Pricing = lazy(() => import('@/pages/public/Pricing').then(m => ({ default: m.Pricing })));
 const Services = lazy(() => import('@/pages/public/Services').then(m => ({ default: m.Services })));
 const ServiceDetail = lazy(() => import('@/pages/public/ServiceDetail').then(m => ({ default: m.ServiceDetail })));
@@ -54,6 +56,9 @@ const AdminServices = lazy(() => import('@/pages/admin/AdminServices').then(m =>
 const AdminAds = lazy(() => import('@/pages/admin/AdminAds').then(m => ({ default: m.AdminAds })));
 const AdminFinance = lazy(() => import('@/pages/admin/AdminFinance').then(m => ({ default: m.AdminFinance })));
 const AdminSettings = lazy(() => import('@/pages/admin/AdminSettings').then(m => ({ default: m.AdminSettings })));
+const AdminInbox = lazy(() => import('@/pages/admin/AdminInbox').then(m => ({ default: m.AdminInbox })));
+const AdminNewsletter = lazy(() => import('@/pages/admin/AdminNewsletter').then(m => ({ default: m.AdminNewsletter })));
+const AdminMedia = lazy(() => import('@/pages/admin/AdminMedia').then(m => ({ default: m.AdminMedia })));
 const AdminReports = lazy(() => import('@/pages/admin/AdminReports').then(m => ({ default: m.AdminReports })));
 
 function LoadingScreen() {
@@ -70,6 +75,7 @@ function LoadingScreen() {
 export default function App() {
   return (
     <Suspense fallback={<LoadingScreen />}>
+      <Analytics />
       <Routes>
         {/* Public Routes */}
         <Route element={<PublicLayout />}>
@@ -85,6 +91,7 @@ export default function App() {
           <Route path="/confidentialite" element={<Privacy />} />
           <Route path="/conditions" element={<Terms />} />
           <Route path="/tarifs" element={<Pricing />} />
+          <Route path="/propriete/:slug" element={<PropertyAlias />} />
           <Route path="/services" element={<Services />} />
           <Route path="/services/:slug" element={<ServiceDetail />} />
           <Route path="/agences" element={<Agencies />} />
@@ -134,6 +141,9 @@ export default function App() {
               <Route path="/admin/publicites" element={<AdminAds />} />
               <Route path="/admin/rapports" element={<AdminFinance />} />
               <Route path="/admin/parametres" element={<AdminSettings />} />
+              <Route path="/admin/messages" element={<AdminInbox />} />
+              <Route path="/admin/newsletter" element={<AdminNewsletter />} />
+              <Route path="/admin/medias" element={<AdminMedia />} />
             </Route>
           </Route>
         </Route>

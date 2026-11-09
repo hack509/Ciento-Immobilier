@@ -3,9 +3,11 @@ import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import {
   LayoutDashboard, Building2, Heart, MessageSquare, Bell, Settings, LogOut, User, Menu, X,
   ShieldCheck, ClipboardCheck, Users, Flag, Plus, ArrowLeft, Inbox, BarChart3, Megaphone, BadgeCheck,
-  Receipt, Building, Briefcase, CreditCard, MonitorPlay, LineChart, SlidersHorizontal, FolderKanban,
+  Receipt, Building, Briefcase, Mail, Images, CreditCard, MonitorPlay, LineChart, SlidersHorizontal, FolderKanban,
 } from 'lucide-react';
 import { useMyAgencies } from '@/hooks/useMarketplace';
+import { useInboxCounts } from '@/hooks/useInbox';
+import { NoIndex } from '@/components/seo/Head';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUnreadCount } from '@/hooks/useNotifications';
 import { cn, getRoleLabel } from '@/lib/utils';
@@ -37,8 +39,11 @@ const ADMIN_LINKS: NavLink[] = [
   { icon: ShieldCheck, label: 'Vue d’ensemble', to: '/admin', exact: true },
   { icon: ClipboardCheck, label: 'Modération', to: '/admin/annonces' },
   { icon: Users, label: 'Utilisateurs', to: '/admin/utilisateurs' },
+  { icon: Inbox, label: 'Messages & contacts', to: '/admin/messages' },
   { icon: Flag, label: 'Signalements', to: '/admin/signalements' },
   { icon: Building, label: 'Agences', to: '/admin/agences' },
+  { icon: Mail, label: 'Newsletter', to: '/admin/newsletter' },
+  { icon: Images, label: 'Médias', to: '/admin/medias' },
   { icon: BadgeCheck, label: 'Abonnements & tarifs', to: '/admin/abonnements' },
   { icon: CreditCard, label: 'Paiements', to: '/admin/paiements' },
   { icon: Megaphone, label: 'Promotions', to: '/admin/promotions' },
@@ -71,6 +76,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const { data: unreadCount = 0 } = useUnreadCount();
   const isAdmin = profile?.role === 'admin' || profile?.role === 'super_admin';
   const { data: agencies } = useMyAgencies();
+  const { data: inboxCounts } = useInboxCounts(isAdmin);
   const agency = agencies?.[0];
 
   const isActive = (link: NavLink) =>
@@ -84,7 +90,8 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const renderLink = (link: NavLink) => {
     const Icon = link.icon;
     const active = isActive(link);
-    const badge = link.to === '/dashboard/notifications' && unreadCount > 0 ? unreadCount : 0;
+    const badge = link.to === '/dashboard/notifications' ? unreadCount
+      : link.to === '/admin/messages' ? inboxCounts?.unread ?? 0 : 0;
     return (
       <Link
         key={link.to}
@@ -228,6 +235,7 @@ export function DashboardLayout() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <NoIndex />
       {/* Mobile header */}
       <div className="sticky top-0 z-40 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 lg:hidden">
         <button
@@ -242,7 +250,7 @@ export function DashboardLayout() {
           <Menu className="h-5 w-5" />
         </button>
         <Link to="/" className="flex items-center gap-2">
-          <img src="/logo.jpg" alt="Ciento-Immobilier" className="h-8 w-auto rounded" />
+          <img src="/logo-320.webp" alt="Ciento-Immobilier" className="h-8 w-auto rounded" />
         </Link>
         <div className="w-11" />
       </div>

@@ -52,12 +52,12 @@ export function Register() {
 
   return (
     <>
-      <Head title="Créer un compte" description="Rejoignez la communauté Ciento-Immobilier et publiez vos annonces." />
+      <Head title="Créer un compte" description="Rejoignez CIENTO-IMMOBILIER et publiez vos annonces." noindex />
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 mb-6">
-            <img src="/logo.jpg" alt="Ciento-Immobilier" className="h-12 w-auto rounded-xl object-contain" />
+            <img src="/logo-320.webp" alt="Ciento-Immobilier" className="h-12 w-auto rounded-xl object-contain" />
           </Link>
           <h1 className="text-2xl font-bold text-primary-800">Créer un compte</h1>
           <p className="text-gray-500 mt-1">Rejoignez la communauté Ciento-Immobilier</p>

@@ -20,7 +20,7 @@ export function useUploadPropertyImage() {
 export function useDeletePropertyImage() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ imageId, storagePath }: { imageId: string; storagePath: string }) =>
+    mutationFn: ({ imageId, storagePath }: { imageId: string; storagePath: string | null }) =>
       storageService.deletePropertyImage(imageId, storagePath),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['properties'] });

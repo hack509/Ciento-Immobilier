@@ -11,7 +11,9 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { Head } from '@/components/seo/Head';
 import { HeroSearch } from '@/components/home/HeroSearch';
 import { useFeaturedProperties, useSponsoredProperties } from '@/hooks/useProperties';
-import { PROPERTY_TYPES } from '@/lib/constants';
+import { PROPERTY_TYPES, SOCIAL_LINKS } from '@/lib/constants';
+import { organizationJsonLd, websiteJsonLd } from '@/lib/seo-core';
+import { getEnv } from '@/lib/env';
 
 const typeIcons: Record<(typeof PROPERTY_TYPES)[number]['value'], typeof HomeIcon> = {
   house: HomeIcon,
@@ -63,8 +65,8 @@ export function Home() {
   return (
     <div>
       <Head
-        title="Accueil"
-        description="Achetez, louez ou vendez des biens immobiliers aux Gonaïves, Artibonite, Haïti. La première plateforme immobilière des Gonaïves."
+        url="/"
+        jsonLd={[organizationJsonLd(getEnv().appUrl, [SOCIAL_LINKS.facebook, SOCIAL_LINKS.instagram].filter(Boolean)), websiteJsonLd(getEnv().appUrl)]}
       />
 
       {/* Hero */}

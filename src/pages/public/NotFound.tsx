@@ -5,7 +5,7 @@ import { Head } from '@/components/seo/Head';
 export function NotFound() {
   return (
     <>
-      <Head title="Page introuvable" description="La page que vous recherchez n'existe pas ou a été déplacée." />
+      <Head title="Page introuvable" description="La page que vous recherchez n'existe pas ou a été déplacée." noindex />
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="text-center">
         <div className="text-8xl font-bold text-primary-200 mb-4">404</div>

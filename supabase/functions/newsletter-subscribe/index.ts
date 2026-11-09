@@ -83,6 +83,19 @@ Deno.serve(async (request: Request) => {
     return jsonResponse({ error: 'Impossible de traiter la demande.' }, 500);
   }
 
+  // Proof of consent (hashed IP, user agent, form). Never blocks the subscription.
+  await fetch(`${supabaseUrl}/rest/v1/rpc/record_newsletter_request`, {
+    method: 'POST',
+    headers: { apikey: serviceRoleKey, Authorization: `Bearer ${serviceRoleKey}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      p_email: email,
+      p_client_ip: clientIp,
+      p_user_agent: request.headers.get('user-agent') ?? null,
+      p_source: typeof (payload as { source?: unknown }).source === 'string'
+        ? String((payload as { source?: unknown }).source).slice(0, 40) : 'website',
+    }),
+  }).catch(() => console.error('Newsletter consent logging failed.'));
+
   const actionUrl = `${supabaseUrl}/functions/v1/newsletter-manage?token=${token.out_token}`;
   const isConfirmation = token.out_purpose === 'confirm';
   const subject = isConfirmation
@@ -93,9 +106,9 @@ Deno.serve(async (request: Request) => {
     ? 'Confirmez votre adresse e-mail pour activer votre inscription à la newsletter.'
     : 'Cette adresse est déjà inscrite. Vous pouvez vous désinscrire en confirmant ci-dessous.';
   const html = `<div style="font-family:Arial,sans-serif;max-width:560px;margin:32px auto;color:#1f2937">
-    <h1 style="font-size:22px">Ciento-Immobilier</h1>
+    <h1 style="font-size:22px;color:#1D3E91">CIENTO-IMMOBILIER</h1>
     <p>${message}</p>
-    <p><a href="${actionUrl}" style="display:inline-block;padding:12px 18px;background:#d4a84b;color:#111827;text-decoration:none;border-radius:6px">${actionLabel}</a></p>
+    <p><a href="${actionUrl}" style="display:inline-block;padding:12px 18px;background:#F4D000;color:#1D3E91;text-decoration:none;border-radius:6px">${actionLabel}</a></p>
     <p style="font-size:13px;color:#6b7280">Ce lien expire dans 7 jours. Si vous n'avez pas demandé cette action, ignorez ce message.</p>
   </div>`;
 

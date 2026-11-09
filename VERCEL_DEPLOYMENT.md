@@ -114,3 +114,12 @@ After deployment, verify:
 - [ ] 404 page shows for unknown routes
 - [ ] SEO meta tags present in page source
 - [ ] No CORS errors in browser console
+
+## SEO (server-side tags & sitemap)
+
+- `api/render.ts` (Edge) injects per-page title/description/canonical/Open Graph/JSON-LD for
+  `/annonces/:city/:slug`, `/agences/:slug`, `/services/:slug`; `api/sitemap.ts` serves `/sitemap.xml`.
+  Both read `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` and `VITE_APP_URL` (set it to the final domain).
+- `robots.txt` is generated at build time from `VITE_APP_URL`.
+- Optional: `VITE_GOOGLE_SITE_VERIFICATION`, `VITE_BING_SITE_VERIFICATION`, `VITE_GA_MEASUREMENT_ID`.
+- Search Console / Bing procedure: see `docs/NEWSLETTER-MEDIAS-MESSAGERIE-SEO.md` §6.

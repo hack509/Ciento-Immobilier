@@ -116,7 +116,7 @@ export function Header() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 shrink-0 min-h-[44px]">
             <img
-              src="/logo.jpg"
+              src="/logo-320.webp"
               alt="Ciento-Immobilier"
               className="h-10 w-auto rounded-lg object-contain"
             />
@@ -304,7 +304,7 @@ export function Header() {
         {/* Drawer Header */}
         <div className="flex items-center justify-between px-4 h-16 border-b border-gray-100 shrink-0">
           <Link to="/" className="flex items-center gap-2.5 min-h-[44px]" onClick={closeMenu}>
-            <img src="/logo.jpg" alt="Ciento-Immobilier" className="h-8 w-auto rounded-lg object-contain" />
+            <img src="/logo-320.webp" alt="Ciento-Immobilier" className="h-8 w-auto rounded-lg object-contain" />
             <span className="text-primary-800 font-bold text-lg">Ciento</span>
           </Link>
           <button

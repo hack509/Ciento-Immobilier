@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { storageService } from './storage.service';
+import { signImageRows } from './media.service';
 import type { Agency, Property } from '@/types';
 import type {
   AgencyMember, AgencyMemberRole, InquiryStatus, ListingStats, MyAgency, PropertyInquiry, PublicTeamMember,
@@ -114,7 +114,7 @@ class MarketplaceService {
     let query = supabase
       .from('properties')
       .select(`*, city:cities!properties_city_id_fkey(id, name, slug),
-               images:property_images!property_images_property_id_fkey(url, storage_path, alt_text, is_primary, sort_order)`)
+               images:property_images!property_images_property_id_fkey(url, storage_path, thumbnail_path, source, alt_text, is_primary, sort_order)`)
       .eq('agency_id', agencyId)
       .order('created_at', { ascending: false })
       .limit(200);
@@ -163,7 +163,7 @@ class MarketplaceService {
       .from('properties')
       .select(`*, city:cities!properties_city_id_fkey(id, name, slug),
                neighborhood:neighborhoods!properties_neighborhood_id_fkey(id, name, slug),
-               images:property_images!property_images_property_id_fkey(url, storage_path, alt_text, is_primary, sort_order)`)
+               images:property_images!property_images_property_id_fkey(url, storage_path, thumbnail_path, source, alt_text, is_primary, sort_order)`)
       .eq('agency_id', agencyId)
       .eq('is_published', true)
       .eq('status', 'active')
@@ -219,12 +219,9 @@ class MarketplaceService {
   }
 
   private async signImages(properties: Property[]): Promise<Property[]> {
-    return Promise.all(properties.map(async (p) => ({
-      ...p,
-      images: await Promise.all((p.images || []).map(async (img) => ({
-        ...img, url: await storageService.getSignedUrl(img.storage_path).catch(() => img.url),
-      }))),
-    })));
+    const signed = await signImageRows(properties.flatMap((p) => p.images || []));
+    let index = 0;
+    return properties.map((p) => ({ ...p, images: (p.images || []).map(() => signed[index++]) }));
   }
 }
 

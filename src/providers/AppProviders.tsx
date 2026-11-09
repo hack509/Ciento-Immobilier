@@ -3,6 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { ToastProvider } from '@/components/ui/Toast';
 import type { ReactNode } from 'react';
 
 const queryClient = new QueryClient({
@@ -23,7 +24,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
         <BrowserRouter>
           <ErrorBoundary>
             <AuthProvider>
-              {children}
+              <ToastProvider>{children}</ToastProvider>
             </AuthProvider>
           </ErrorBoundary>
         </BrowserRouter>

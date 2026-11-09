@@ -100,6 +100,8 @@ export function Properties() {
     updateFilters({ min_price: range?.min, max_price: range?.max });
   };
 
+  // Filter combinations are near-duplicates of /annonces: crawlable links, not indexed.
+  const isFilteredDuplicate = Array.from(searchParams.keys()).some((k) => k !== 'page');
   const advancedCount = [neighborhoodId, bedrooms, bathrooms, minArea, availableNow].filter(Boolean).length;
   const activeFilterCount = [propertyType, listingType, cityId, minPrice !== undefined].filter(Boolean).length + advancedCount;
   const count = data?.count ?? 0;
@@ -175,7 +177,12 @@ export function Properties() {
 
   return (
     <>
-      <Head title="Annonces immobilières" description="Découvrez toutes les annonces immobilières aux Gonaïves et en Haïti. Achetez, louez ou vendez des biens." />
+      <Head
+        title={page > 1 ? `Annonces immobilières — page ${page}` : 'Annonces immobilières en Haïti'}
+        description="Maisons, appartements, terrains et locaux commerciaux à vendre ou à louer aux Gonaïves et partout en Haïti."
+        url={page > 1 ? `/annonces?page=${page}` : '/annonces'}
+        noindex={isFilteredDuplicate}
+      />
       <div className="bg-gray-50 min-h-screen">
         <PageHero
           eyebrow="Annonces"

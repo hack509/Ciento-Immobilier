@@ -154,6 +154,7 @@ export interface Property {
   city?: City;
   neighborhood?: Neighborhood;
   images?: PropertyImage[];
+  videos?: PropertyVideo[];
   amenities?: Amenity[];
 }
 
@@ -161,7 +162,14 @@ export interface PropertyImage {
   id: string;
   property_id: string;
   url: string;
-  storage_path: string;
+  storage_path: string | null;
+  /** 'external' = hotlinked https image (no storage object). */
+  source?: 'upload' | 'external';
+  external_url?: string | null;
+  thumbnail_path?: string | null;
+  /** Signed URL of the optimised thumbnail (set client-side). */
+  thumbnail_url?: string;
+  moderation_status?: 'approved' | 'flagged' | 'removed';
   alt_text?: string;
   sort_order: number;
   is_primary: boolean;
@@ -174,8 +182,11 @@ export interface PropertyVideo {
   id: string;
   property_id: string;
   url: string;
-  storage_path?: string;
-  thumbnail_url?: string;
+  storage_path?: string | null;
+  source?: 'upload' | 'youtube' | 'vimeo' | 'external';
+  provider_video_id?: string | null;
+  moderation_status?: 'approved' | 'flagged' | 'removed';
+  thumbnail_url?: string | null;
   title?: string;
   duration_seconds?: number;
   sort_order: number;

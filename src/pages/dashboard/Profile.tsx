@@ -7,6 +7,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { authService } from '@/services/auth.service';
 import { getRoleLabel } from '@/lib/utils';
 import { PageHeader } from '@/components/dashboard/DashboardUI';
+import { AvatarUploader } from '@/components/profile/AvatarUploader';
+import { UserAvatar } from '@/components/ui/UserAvatar';
 
 export function Profile() {
   const { profile, refreshProfile } = useAuth();
@@ -53,6 +55,10 @@ export function Profile() {
     <div>
       <PageHeader title="Mon profil" subtitle="Ces informations aident les acheteurs et propriétaires à vous identifier." />
 
+      <div className="mb-6 rounded-2xl border border-gray-100 bg-white p-6 shadow-card">
+        <AvatarUploader />
+      </div>
+
       <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-6">
         {success && (
           <div className="mb-4 p-3 bg-success-50 text-success-600 text-sm rounded-lg">{success}</div>
@@ -63,9 +69,7 @@ export function Profile() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100">
-            <div className="w-20 h-20 bg-primary-800 rounded-full flex items-center justify-center text-white font-bold text-2xl">
-              {profile?.first_name?.[0]}{profile?.last_name?.[0]}
-            </div>
+            <UserAvatar firstName={profile?.first_name} lastName={profile?.last_name} url={profile?.avatar_url} size="lg" />
             <div>
               <div className="font-semibold text-gray-900">{profile?.first_name} {profile?.last_name}</div>
               <div className="text-sm text-gray-500">{profile?.email}</div>

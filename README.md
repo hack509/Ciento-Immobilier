@@ -40,7 +40,9 @@ supabase/
     ├── 008-009        # Newsletter feature
     ├── 010-013        # Storage, profile creation, security fixes, messaging RPCs
     ├── 014-015        # Security hardening, admin moderation
-    └── 016-018        # Marketplace, monetization & payments, admin audit (see docs/PLATEFORME-MARKETPLACE.md)
+    ├── 016-018        # Marketplace, monetization & payments, admin audit (see docs/PLATEFORME-MARKETPLACE.md)
+    └── 019            # Newsletter, profile photos, listing media, contact inbox (see docs/NEWSLETTER-MEDIAS-MESSAGERIE-SEO.md)
+api/                   # Vercel Edge Functions: server-side SEO tags, dynamic sitemap.xml
 ```
 
 ## TypeScript Configuration

@@ -1,26 +1,23 @@
 import { supabase } from './supabase';
-import { storageService } from './storage.service';
+import { signImageRows } from './media.service';
 import type { Property, PropertyStatus, SearchFilters, PaginatedResponse, Amenity } from '@/types';
 import { ITEMS_PER_PAGE } from '@/lib/constants';
 import { sanitizeSearchTerm } from '@/lib/monetization';
 
 type PropertyWithStorageImages = {
-  images?: { storage_path: string; url: string }[] | null;
+  images?: { storage_path: string | null; url: string; source?: string; thumbnail_path?: string | null }[] | null;
 };
 
 class PropertiesService {
+  /** Signs every image of every listing in one batched request (external images kept as-is). */
   private async signImages<T extends PropertyWithStorageImages>(properties: T[]): Promise<T[]> {
-    return Promise.all(
-      properties.map(async (property) => ({
-        ...property,
-        images: await Promise.all(
-          (property.images || []).map(async (image) => ({
-            ...image,
-            url: await storageService.getSignedUrl(image.storage_path),
-          }))
-        ),
-      }))
-    );
+    const all = properties.flatMap((p) => p.images || []);
+    const signed = await signImageRows(all);
+    let index = 0;
+    return properties.map((property) => ({
+      ...property,
+      images: (property.images || []).map(() => signed[index++]),
+    }));
   }
 
   async getAll(filters: SearchFilters = {}): Promise<PaginatedResponse<Property>> {
@@ -39,7 +36,7 @@ class PropertiesService {
         category:categories!properties_category_id_fkey(id, name, slug),
         city:cities!properties_city_id_fkey(id, name, slug),
         neighborhood:neighborhoods!properties_neighborhood_id_fkey(id, name, slug),
-        images:property_images!property_images_property_id_fkey(url, storage_path, alt_text, is_primary, sort_order)
+        images:property_images!property_images_property_id_fkey(id, url, storage_path, thumbnail_path, source, alt_text, is_primary, sort_order)
       `, { count: 'exact' })
       .eq('is_published', true)
       .eq('status', 'active');
@@ -102,8 +99,9 @@ class PropertiesService {
         category:categories!properties_category_id_fkey(id, name, slug),
         city:cities!properties_city_id_fkey(id, name, slug),
         neighborhood:neighborhoods!properties_neighborhood_id_fkey(id, name, slug),
-        images:property_images!property_images_property_id_fkey(url, storage_path, alt_text, is_primary, sort_order),
-        amenities:property_amenities!property_amenities_property_id_fkey(amenity:amenities(id, name, slug, icon))
+        images:property_images!property_images_property_id_fkey(id, url, storage_path, thumbnail_path, source, alt_text, is_primary, sort_order),
+        amenities:property_amenities!property_amenities_property_id_fkey(amenity:amenities(id, name, slug, icon)),
+        videos:property_videos!property_videos_property_id_fkey(id, url, source, provider_video_id, storage_path, thumbnail_url, title, sort_order)
       `)
       .eq('slug', slug)
       .eq('is_published', true)
@@ -132,7 +130,7 @@ class PropertiesService {
         *,
         owner:public_profiles!properties_owner_id_fkey(id, first_name, last_name),
         city:cities!properties_city_id_fkey(id, name, slug),
-        images:property_images!property_images_property_id_fkey(url, storage_path, alt_text, is_primary, sort_order)
+        images:property_images!property_images_property_id_fkey(id, url, storage_path, thumbnail_path, source, alt_text, is_primary, sort_order)
       `)
       .eq('is_published', true)
       .eq('status', 'active')
@@ -152,7 +150,7 @@ class PropertiesService {
         *,
         city:cities!properties_city_id_fkey(id, name, slug),
         neighborhood:neighborhoods!properties_neighborhood_id_fkey(id, name, slug),
-        images:property_images!property_images_property_id_fkey(url, storage_path, alt_text, is_primary, sort_order)
+        images:property_images!property_images_property_id_fkey(id, url, storage_path, thumbnail_path, source, alt_text, is_primary, sort_order)
       `)
       .eq('is_published', true)
       .eq('status', 'active')
@@ -171,7 +169,7 @@ class PropertiesService {
         *,
         owner:public_profiles!properties_owner_id_fkey(id, first_name, last_name),
         city:cities!properties_city_id_fkey(id, name, slug),
-        images:property_images!property_images_property_id_fkey(url, storage_path, alt_text, is_primary, sort_order)
+        images:property_images!property_images_property_id_fkey(id, url, storage_path, thumbnail_path, source, alt_text, is_primary, sort_order)
       `)
       .eq('is_published', true)
       .eq('status', 'active')
@@ -188,7 +186,7 @@ class PropertiesService {
       .select(`
         *,
         city:cities!properties_city_id_fkey(id, name, slug),
-        images:property_images!property_images_property_id_fkey(url, storage_path, alt_text, is_primary, sort_order)
+        images:property_images!property_images_property_id_fkey(id, url, storage_path, thumbnail_path, source, alt_text, is_primary, sort_order)
       `)
       .eq('is_published', true)
       .eq('status', 'active')
@@ -213,7 +211,7 @@ class PropertiesService {
       .select(`
         *,
         city:cities!properties_city_id_fkey(id, name, slug),
-        images:property_images!property_images_property_id_fkey(url, storage_path, alt_text, is_primary, sort_order)
+        images:property_images!property_images_property_id_fkey(id, url, storage_path, thumbnail_path, source, alt_text, is_primary, sort_order)
       `, { count: 'exact' })
       .eq('owner_id', userId)
       .order('created_at', { ascending: false })
@@ -244,7 +242,7 @@ class PropertiesService {
         *,
         city:cities!properties_city_id_fkey(id, name, slug),
         owner:profiles!properties_owner_id_fkey(id, first_name, last_name, email, phone),
-        images:property_images!property_images_property_id_fkey(url, storage_path, alt_text, is_primary, sort_order)
+        images:property_images!property_images_property_id_fkey(id, url, storage_path, thumbnail_path, source, alt_text, is_primary, sort_order)
       `, { count: 'exact' })
       .order('created_at', { ascending: false })
       .range(from, from + perPage - 1);
